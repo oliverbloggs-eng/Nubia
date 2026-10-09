@@ -1,0 +1,23 @@
+# Nubia KC Estates Ltd
+
+> Property management, lettings and sales company in Nairobi, Kenya, serving apartment owners, individual landlords (1 to 10 units), diaspora property owners, and real estate investors and developers.
+
+AI and LLM crawlers may read and summarise the public pages listed below. The same pages are open to search engines in robots.txt; /app.html and /source/ are internal files and should not be indexed.
+
+## Key facts
+- Services: tenant management (sourcing, vetting, leases, rent enforcement), financial management (M-Pesa and bank rent collection, monthly statements, arrears tracking), property maintenance (inspections, repairs, preventive planning).
+- Management fee: 8% of rent collected.
+- Areas: Kilimani, Westlands, Ngong Road, Juja, Thika and Murang'a.
+- Leadership: Lynne Chepchumba (Founder), Kenneth Mworia (Chief Executive Officer), Paul Chimatuni (Director).
+- Office: Crescent Business Centre, Parklands, Nairobi, Kenya.
+- Phone and WhatsApp: +254 703 277 912
+- Email: info@nubiakcestates.co.ke
+
+## Pages
+- [Home](https://nubiakcestates.co.ke/): services, how we differ, areas we manage
+- [About us](https://nubiakcestates.co.ke/about/): who we are, leadership, how handover works, payment options
+- [Find property](https://nubiakcestates.co.ke/find-property/): homes and land to rent or buy
+- [Blog](https://nubiakcestates.co.ke/blog/): guides for landlords, buyers and diaspora owners
+- [How to Invest in Real Estate in Kenya: A Beginner’s Guide](https://nubiakcestates.co.ke/blog/how-to-invest-in-real-estate-in-kenya/)
+- [Contact](https://nubiakcestates.co.ke/contact/): enquiries for owners, tenants and buyers
+- [Careers](https://nubiakcestates.co.ke/careers/)

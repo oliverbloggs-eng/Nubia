@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /app.html
+Disallow: /source/
+Disallow: /404.html
+
+Sitemap: https://nubiakcestates.co.ke/sitemap.xml

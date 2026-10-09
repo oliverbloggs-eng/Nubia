@@ -1,0 +1,46 @@
+/* colors */
+:root{
+  /* Navy — primary brand */
+  --navy-950:#081226; --navy-900:#0E1B33; --navy-800:#16284A; --navy-700:#223A63; --navy-600:#34507F; --navy-200:#C7D0DF; --navy-100:#E4E8F0;
+  /* Gold — accent, luxury signal */
+  --gold-700:#8E6C2F; --gold-600:#A8843F; --gold-500:#C9A45C; --gold-300:#E2CB97; --gold-100:#F4EBD6;
+  /* Neutrals — warm */
+  --ivory:#FBF8F2; --sand-100:#F3EEE3; --sand-200:#E7DFCE; --stone-400:#A39C8E; --stone-600:#6B665C; --ink:#14171F; --white:#FFFFFF;
+  /* Semantic */
+  --success:#2F7A55; --success-bg:#E3F1E9; --warning:#A8691F; --warning-bg:#F8ECD9; --danger:#A83A32; --danger-bg:#F6E1DF;
+  /* Aliases */
+  --surface-page:var(--ivory); --surface-card:var(--white); --surface-muted:var(--sand-100); --surface-inverse:var(--navy-900);
+  --text-primary:var(--ink); --text-secondary:var(--stone-600); --text-inverse:var(--ivory); --text-accent:var(--gold-600);
+  --border-subtle:var(--sand-200); --border-strong:var(--navy-900); --border-gold:var(--gold-500);
+  --action-primary:var(--navy-900); --action-primary-hover:var(--navy-800); --action-accent:var(--gold-500); --action-accent-hover:var(--gold-600);
+}
+
+/* typography */
+:root{
+  --num-display:lining-nums; /* Cormorant defaults to old-style figures — always set font-variant-numeric:lining-nums */
+  --font-display:'Cormorant Garamond', 'Times New Roman', serif;
+  --font-sans:'Hanken Grotesk', system-ui, sans-serif;
+  --fs-display-xl:88px; --fs-display-lg:64px; --fs-display-md:48px; --fs-display-sm:36px; --fs-title:24px;
+  --fs-body-lg:18px; --fs-body:16px; --fs-small:14px; --fs-eyebrow:12px;
+  --lh-display:1.02; --lh-title:1.2; --lh-body:1.6;
+  --fw-regular:400; --fw-medium:500; --fw-semibold:600; --fw-bold:700;
+  --tracking-eyebrow:0.18em; --tracking-button:0.08em; --tracking-display:-0.01em;
+}
+
+/* spacing */
+:root{
+  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:24px; --space-6:32px; --space-7:48px; --space-8:64px; --space-9:96px; --space-10:128px;
+  --section-gap:120px; --container:1240px; --gutter:32px;
+}
+
+/* radius */
+:root{ --radius-none:0; --radius-sm:2px; --radius-md:4px; --radius-lg:8px; --radius-pill:9999px; }
+
+/* elevation */
+:root{
+  --elev-1:0 1px 2px rgba(14,27,51,.06);
+  --elev-2:0 8px 24px -8px rgba(14,27,51,.14);
+  --elev-3:0 24px 64px -16px rgba(14,27,51,.28);
+  --ease:cubic-bezier(.2,.7,.2,1); --dur:.24s;
+}
+
