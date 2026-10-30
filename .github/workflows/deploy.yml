@@ -1,6 +1,8 @@
 # Deploys to Hostinger over FTP when main changes.
 # Add these in GitHub > Settings > Secrets and variables > Actions:
 #   FTP_HOST, FTP_USER, FTP_PASS
+# The FTP account's directory must be /home/u984171052/domains/nubiakcestates.com/
+# (one level ABOVE public_html) so nubia-shared stays outside the web root.
 # Database changes are NEVER run here. Run install/migrations/*.sql by hand in phpMyAdmin.
 name: Deploy to Hostinger
 
@@ -29,7 +31,7 @@ jobs:
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASS }}
           local-dir: ./site/
-          server-dir: domains/nubiakcestates.com/public_html/
+          server-dir: public_html/
           state-name: .ftp-deploy-site.json
           exclude: |
             **/.git*
@@ -44,7 +46,7 @@ jobs:
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASS }}
           local-dir: ./system/
-          server-dir: domains/nubiakcestates.com/public_html/system/
+          server-dir: public_html/system/
           state-name: .ftp-deploy-system.json
 
       - name: Shared -> nubia-shared (outside web root)
