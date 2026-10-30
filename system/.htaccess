@@ -1,0 +1,24 @@
+# Nubia KC Estates Management System
+Options -Indexes
+DirectoryIndex index.php
+
+RewriteEngine On
+
+# Always use https://system.nubiakcestates.com (also catches
+# nubiakcestates.com/system/ when this folder sits inside the website)
+RewriteCond %{HTTP_HOST} !^system\.nubiakcestates\.com$ [NC]
+RewriteCond %{HTTP_HOST} !^(localhost|127\.0\.0\.1)(:\d+)?$ [NC]
+RewriteCond %{HTTP_HOST} !\.test$ [NC]
+RewriteRule ^(.*)$ https://system.nubiakcestates.com/$1 [L,R=301]
+
+# Force HTTPS
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP_HOST} !^(localhost|127\.0\.0\.1)(:\d+)?$ [NC]
+RewriteCond %{HTTP_HOST} !\.test$ [NC]
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Block direct access to code includes and install files
+RewriteRule ^(inc|install)(/|$) - [F,L]
+<FilesMatch "^(config\.php|config\.sample\.php|README\.md)$">
+  Require all denied
+</FilesMatch>

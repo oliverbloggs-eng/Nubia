@@ -1,0 +1,22 @@
+# Passwords and server settings
+shared/config.php
+*.env
+.env*
+
+# Uploaded photos (live on the server, backed up by Hostinger)
+site/uploads/*
+!site/uploads/.htaccess
+
+# Database exports and backups
+*.sql.gz
+*.zip
+backups/
+dumps/
+
+# Local tools
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+node_modules/
+*.log

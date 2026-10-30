@@ -1,0 +1,60 @@
+# Deploys to Hostinger over FTP when main changes.
+# Add these in GitHub > Settings > Secrets and variables > Actions:
+#   FTP_HOST, FTP_USER, FTP_PASS
+# Database changes are NEVER run here. Run install/migrations/*.sql by hand in phpMyAdmin.
+name: Deploy to Hostinger
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: PHP syntax check
+        run: find system shared -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Website -> public_html
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          local-dir: ./site/
+          server-dir: domains/nubiakcestates.com/public_html/
+          state-name: .ftp-deploy-site.json
+          exclude: |
+            **/.git*
+            **/.git*/**
+            uploads/**
+            system/**
+
+      - name: System -> public_html/system
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          local-dir: ./system/
+          server-dir: domains/nubiakcestates.com/public_html/system/
+          state-name: .ftp-deploy-system.json
+
+      - name: Shared -> nubia-shared (outside web root)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          local-dir: ./shared/
+          server-dir: nubia-shared/
+          state-name: .ftp-deploy-shared.json
+          exclude: |
+            config.php
