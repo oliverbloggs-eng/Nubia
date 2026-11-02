@@ -1,8 +1,9 @@
 # Deploys to Hostinger over FTP when main changes.
 # Add these in GitHub > Settings > Secrets and variables > Actions:
 #   FTP_HOST, FTP_USER, FTP_PASS
-# The FTP account's directory must be /home/u984171052/domains/nubiakcestates.com/
-# (one level ABOVE public_html) so nubia-shared stays outside the web root.
+# Hostinger FTP logins always start inside public_html, so server-dir paths are relative to it.
+# nubia-shared sits outside public_html, where FTP cannot reach: upload shared/ there by hand
+# in hPanel > File Manager whenever it changes.
 # Database changes are NEVER run here. Run install/migrations/*.sql by hand in phpMyAdmin.
 name: Deploy to Hostinger
 
@@ -24,23 +25,6 @@ jobs:
       - name: PHP syntax check
         run: find system shared -name '*.php' -print0 | xargs -0 -n1 php -l
 
-      - name: Website -> public_html
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USER }}
-          password: ${{ secrets.FTP_PASS }}
-          protocol: ftp
-          timeout: 120000
-          local-dir: ./site/
-          server-dir: public_html/
-          state-name: .ftp-deploy-site.json
-          exclude: |
-            **/.git*
-            **/.git*/**
-            uploads/**
-            system/**
-
       - name: System -> public_html/system
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -50,10 +34,10 @@ jobs:
           protocol: ftp
           timeout: 120000
           local-dir: ./system/
-          server-dir: public_html/system/
+          server-dir: system/
           state-name: .ftp-deploy-system.json
 
-      - name: Shared -> nubia-shared (outside web root)
+      - name: Website -> public_html
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_HOST }}
@@ -61,8 +45,11 @@ jobs:
           password: ${{ secrets.FTP_PASS }}
           protocol: ftp
           timeout: 120000
-          local-dir: ./shared/
-          server-dir: nubia-shared/
-          state-name: .ftp-deploy-shared.json
+          local-dir: ./site/
+          server-dir: ./
+          state-name: .ftp-deploy-site.json
           exclude: |
-            config.php
+            **/.git*
+            **/.git*/**
+            system/**
+            nubia-shared/**
