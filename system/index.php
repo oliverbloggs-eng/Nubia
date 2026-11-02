@@ -33,6 +33,13 @@ $billable    = (int)val('SELECT COUNT(*) FROM units WHERE client_id IS NOT NULL 
 $recentPayments = all('SELECT y.*, c.name client, u.unit_no, p.name property FROM payments y JOIN clients c ON c.id=y.client_id JOIN units u ON u.id=y.unit_id JOIN properties p ON p.id=u.property_id ORDER BY y.paid_on DESC, y.id DESC LIMIT 6');
 $urgentJobs = all('SELECT m.*, p.name property, u.unit_no FROM maintenance m JOIN properties p ON p.id=m.property_id LEFT JOIN units u ON u.id=m.unit_id WHERE m.status <> "Done" ORDER BY FIELD(m.priority,"Urgent","Normal","Low"), m.reported_on LIMIT 5');
 
+// Until migration 002 has been run the table is missing; the dashboard must keep working.
+try {
+    $listingCounts = array_column(all('SELECT status, COUNT(*) n FROM listings GROUP BY status'), 'n', 'status');
+} catch (PDOException $ex) {
+    $listingCounts = null;
+}
+
 page_start('Dashboard', 'dashboard');
 ?>
 <?php if ($billable > $billedThisMonth): ?>
@@ -58,6 +65,17 @@ page_start('Dashboard', 'dashboard');
   <a class="tile" href="clients.php?type=Owner"><span class="ic"><?= icon('owner') ?></span><span><strong><?= $ownersN ?></strong><small>Property owners</small></span></a>
   <a class="tile" href="maintenance.php"><span class="ic"><?= icon('wrench') ?></span><span><strong><?= $openJobs ?></strong><small>Open repairs</small></span></a>
 </div>
+
+<?php if ($listingCounts !== null): ?>
+<div class="card mt">
+  <h3>Listings</h3>
+  <dl class="kv">
+    <dt>Published</dt><dd><?= (int)($listingCounts['published'] ?? 0) ?></dd>
+    <?php if (is_admin()): ?><dt>Waiting for review</dt><dd><a href="listings.php?status=review"><?= (int)($listingCounts['review'] ?? 0) ?></a></dd><?php endif; ?>
+    <dt>Drafts</dt><dd><?= (int)($listingCounts['draft'] ?? 0) ?></dd>
+  </dl>
+</div>
+<?php endif; ?>
 
 <div class="grid grid-2 mt">
   <div class="card flush">
