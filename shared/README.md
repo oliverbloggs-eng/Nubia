@@ -8,4 +8,6 @@ Upload this folder to the top of your Hostinger account, **outside** `public_htm
 - `db.php`: database connection and the `q()`, `one()`, `all()`, `val()`, `e()` and `slugify()` helpers.
 - `images.php`: photo uploads (checks the file, saves WebP at 1600px, 800px and 400px wide, drops metadata).
 
-Listing and blog queries will be added here in the next steps.
+- `listings.php`: listing queries (`listings_public()`, `listing_by_slug()` and others).
+
+Blog queries will be added here in a later step.

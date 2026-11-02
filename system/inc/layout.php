@@ -23,6 +23,8 @@ function icon(string $name): string
         'download'  => '<path d="M12 3v12M7 10l5 5 5-5M5 21h14"/>',
         'whatsapp'  => '<path d="M3 21l1.6-4.8A8.5 8.5 0 1 1 8 19.5z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 1c-1-.5-2-1.5-2.5-2.5l1-1-1-2z"/>',
         'arrow'     => '<path d="M5 12h14M13 6l6 6-6 6"/>',
+        'tag'       => '<path d="M3 3h8l10 10-8 8L3 11zM7.5 7.5h.01"/>',
+        'star'      => '<path d="M12 3l2.8 5.8 6.2.9-4.5 4.4 1.1 6.3-5.6-3-5.6 3 1.1-6.3L3 9.7l6.2-.9z"/>',
     ][$name] ?? '';
     return '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' . $p . '</svg>';
 }
@@ -36,6 +38,7 @@ function page_start(string $title, string $active = ''): void
             ['properties.php', 'properties', 'Properties', 'building'],
             ['units.php', 'units', 'Units', 'door'],
             ['clients.php', 'clients', 'Clients', 'users'],
+            ['listings.php', 'listings', 'Listings', 'tag'],
         ],
         'Money' => [
             ['billing.php', 'billing', 'Monthly billing', 'invoice'],
@@ -54,6 +57,15 @@ function page_start(string $title, string $active = ''): void
             ['users.php', 'users', 'Staff accounts', 'shield'],
         ];
     }
+    $navCounts = [];
+    if (is_admin()) {
+        // Until migration 002 has been run the table is missing; the other pages must keep working.
+        try {
+            $navCounts['listings'] = (int)val("SELECT COUNT(*) FROM listings WHERE status = 'review'");
+        } catch (PDOException $ex) {
+            $navCounts['listings'] = 0;
+        }
+    }
     ?><!doctype html>
 <html lang="en">
 <head>
@@ -62,7 +74,7 @@ function page_start(string $title, string $active = ''): void
 <meta name="robots" content="noindex, nofollow">
 <title><?= e($title) ?> · Nubia KC Estates</title>
 <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
-<link rel="stylesheet" href="assets/app.css?v=1">
+<link rel="stylesheet" href="assets/app.css?v=2">
 </head>
 <body>
 <div class="shell">
@@ -75,7 +87,7 @@ function page_start(string $title, string $active = ''): void
       <?php foreach ($nav as $group => $items): ?>
         <div class="nav-group"><?= e($group) ?></div>
         <?php foreach ($items as [$href, $key, $label, $ic]): ?>
-          <a href="<?= $href ?>" class="<?= $active === $key ? 'active' : '' ?>"><?= icon($ic) ?><span><?= e($label) ?></span></a>
+          <a href="<?= $href ?>" class="<?= $active === $key ? 'active' : '' ?>"><?= icon($ic) ?><span><?= e($label) ?></span><?php if (!empty($navCounts[$key])): ?><span class="nav-count" title="Waiting for review"><?= (int)$navCounts[$key] ?></span><?php endif; ?></a>
         <?php endforeach; ?>
       <?php endforeach; ?>
     </nav>
@@ -105,7 +117,7 @@ function page_end(): void
     <footer class="foot">© <?= date('Y') ?> Nubia KC Estates Ltd · Management System</footer>
   </main>
 </div>
-<script src="assets/app.js?v=1"></script>
+<script src="assets/app.js?v=2"></script>
 </body>
 </html>
 <?php
@@ -126,6 +138,7 @@ function badge(string $text): string
         'Active' => 'green', 'Tenant' => 'navy', 'Owner' => 'gold', 'Buyer' => 'blue',
         'Open' => 'red', 'In progress' => 'gold', 'Done' => 'green',
         'Urgent' => 'red', 'Normal' => 'grey', 'Low' => 'grey', 'Rent' => 'navy', 'Sale' => 'gold',
+        'Draft' => 'grey', 'In review' => 'blue', 'Published' => 'green', 'Let' => 'navy', 'Archived' => 'grey',
     ];
     return '<span class="badge badge-' . ($map[$text] ?? 'grey') . '">' . e($text) . '</span>';
 }

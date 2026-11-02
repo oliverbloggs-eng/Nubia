@@ -145,6 +145,34 @@ details.panel > .body{padding:22px}
 .kv{display:grid;grid-template-columns:150px 1fr;gap:6px 14px;font-size:14px}
 .kv dt{color:var(--muted)} .kv dd{margin:0}
 
+/* ---------- listings ---------- */
+.nav-count{margin-left:auto;background:var(--gold);color:var(--navy);border-radius:999px;font-size:11.5px;font-weight:700;padding:0 8px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.chip{padding:5px 14px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--navy);font-size:13px;font-weight:600;text-decoration:none}
+.chip span{color:var(--muted);font-weight:400;margin-left:2px}
+.chip:hover{border-color:var(--navy)}
+.chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.chip.on span{color:var(--gold)}
+.thumb-cell{width:92px}
+.thumb{display:block;width:72px;height:54px;object-fit:cover;border-radius:8px}
+.thumb-empty{display:grid;place-items:center;background:var(--sand);font-size:11px}
+.star{background:none;border:0;padding:0;color:#D9D1C1;cursor:pointer;vertical-align:-3px}
+.star:hover{color:var(--gold)}
+.star.on{color:var(--gold)}
+.star.on .ico{fill:currentColor}
+span.star{cursor:default}
+.status-card{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.status-card h3{margin-bottom:2px}
+.status-card p{margin:0}
+fieldset.plain{border:0;padding:0;margin:0;min-width:0}
+.upload-row{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.upload-row > div:last-child{padding-top:24px}
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;margin-top:12px}
+.photo{border:1px solid var(--line);border-radius:12px;padding:10px}
+.photo.is-cover{border-color:var(--gold)}
+.photo img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;margin-bottom:10px}
+.photo-actions{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:10px}
+
 /* ---------- print documents (statements, invoices) ---------- */
 .doc{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:36px}
 .doc-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;border-bottom:3px solid var(--gold);padding-bottom:18px;margin-bottom:22px}

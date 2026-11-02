@@ -38,3 +38,32 @@ document.addEventListener('submit', function (ev) {
   }
   cat.addEventListener('change', update); update();
 })();
+
+// Listing photos: send one at a time so a large set never hits the server's total upload limit.
+// Redirects are not followed, so the messages stay in the session for the reload to show.
+(function () {
+  var form = document.getElementById('photoUpload');
+  if (!form) return;
+  var input = form.querySelector('input[type=file]'), btn = form.querySelector('button'), out = document.getElementById('photoProgress');
+  form.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var files = Array.prototype.slice.call(input.files), i = 0;
+    btn.disabled = true;
+    function next() {
+      if (i >= files.length) { window.location.reload(); return; }
+      out.textContent = 'Uploading photo ' + (i + 1) + ' of ' + files.length + '. Keep this page open.';
+      var data = new FormData(form);
+      data.delete('photos[]');
+      data.append('photos[]', files[i]);
+      fetch(window.location.href, {method: 'POST', body: data, redirect: 'manual', credentials: 'same-origin'}).then(function (r) {
+        if (r.type !== 'opaqueredirect' && !r.ok) throw new Error('upload');
+        i++;
+        next();
+      }).catch(function () {
+        out.textContent = 'Photo ' + (i + 1) + ' could not be uploaded. It may be too large. Reload the page and try again.';
+        btn.disabled = false;
+      });
+    }
+    next();
+  });
+})();

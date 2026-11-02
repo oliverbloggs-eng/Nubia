@@ -120,6 +120,9 @@ function require_admin(): void
     }
 }
 
+/** Staff may only change listings that are not yet live; otherwise an edit would skip the publishing step. */
+function can_edit_listing(array $l): bool { return is_admin() || in_array($l['status'], ['draft', 'review'], true); }
+
 function log_action(string $action): void
 {
     q('INSERT INTO activity_log (user_id, action) VALUES (?, ?)', [user()['id'] ?? null, mb_substr($action, 0, 255)]);
