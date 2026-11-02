@@ -210,7 +210,7 @@ input,select,textarea,button{font-family:inherit}
               <sc-if value="{{ a.noImg }}"><span style="position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:12px;padding:0 10px;background:linear-gradient(165deg,#FBF8F2 0%,#F3EEE3 50%,#E7DFCE 100%);transform:{{ a.zoom }};transition:transform .6s ease"><img width="112" height="156" src="/assets/mark-gold-112x156.webp" alt="" draggable="false" style="width:{{ fr.markW }};height:auto;opacity:.3"></img><span style="font:600 10px/1.5 var(--font-sans);letter-spacing:.2em;color:#8E6C2F;text-transform:uppercase;text-align:center">Photographs coming soon</span></span></sc-if>
               <sc-if value="{{ a.hasImg }}" hint-placeholder-val="{{ false }}"><div role="img" aria-label="{{ a.title }}" style="position:absolute;inset:0;background:{{ a.photoBg }};transform:{{ a.zoom }};transition:transform .6s ease"></div></sc-if>
               <div style="position:absolute;top:14px;left:14px;right:72px;display:flex;flex-wrap:wrap;gap:6px">
-                <span style="display:inline-flex;align-items:center;min-height:28px;padding:0 12px;border-radius:999px;background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#0E1B33;font:600 12px/1 var(--font-sans);white-space:nowrap">Title Verified</span>
+                <sc-if value="{{ a.verified }}"><span style="display:inline-flex;align-items:center;min-height:28px;padding:0 12px;border-radius:999px;background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#0E1B33;font:600 12px/1 var(--font-sans);white-space:nowrap">Title Verified</span></sc-if>
                 <sc-if value="{{ a.showTag }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;min-height:28px;padding:0 12px;border-radius:999px;background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#0E1B33;font:600 12px/1 var(--font-sans);white-space:nowrap">{{ a.tagText }}</span></sc-if>
               </div>
               <span aria-hidden="true" style="position:absolute;top:0;right:0;padding:0 0 8px 8px;background:#F3EEE3;border-bottom-left-radius:24px">
@@ -223,9 +223,9 @@ input,select,textarea,button{font-family:inherit}
               <span style="font:600 11.5px var(--font-sans);letter-spacing:.16em;color:#8E6C2F;text-transform:uppercase">{{ a.location }}</span>
               <h3 style="margin:0;font:400 24px/1.15 var(--font-display);font-variant-numeric:lining-nums;color:#0E1B33">{{ a.title }}</h3>
               <div style="display:flex;flex-wrap:wrap;gap:6px 18px;font:400 14px var(--font-sans);color:rgba(14,27,51,.75)">
-                <span style="display:inline-flex;align-items:center;gap:7px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"></path></svg>{{ a.bedsText }}</span>
-                <span style="display:inline-flex;align-items:center;gap:7px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6 6.5 3.5a1.5 1.5 0 0 0-1-.5C4.7 3 4 3.7 4 4.5V17a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5M10 5 8 7M2 12h20M7 19v2M17 19v2"></path></svg>{{ a.baths }} bath</span>
-                <span style="display:inline-flex;align-items:center;gap:7px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"></path></svg>{{ a.size }} m²</span>
+                <sc-if value="{{ a.hasBeds }}"><span style="display:inline-flex;align-items:center;gap:7px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"></path></svg>{{ a.bedsText }}</span></sc-if>
+                <sc-if value="{{ a.hasBaths }}"><span style="display:inline-flex;align-items:center;gap:7px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6 6.5 3.5a1.5 1.5 0 0 0-1-.5C4.7 3 4 3.7 4 4.5V17a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5M10 5 8 7M2 12h20M7 19v2M17 19v2"></path></svg>{{ a.baths }} bath</span></sc-if>
+                <sc-if value="{{ a.hasSize }}"><span style="display:inline-flex;align-items:center;gap:7px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"></path></svg>{{ a.size }} m²</span></sc-if>
               </div>
               <span style="font:600 17px var(--font-sans);font-variant-numeric:lining-nums;color:#0E1B33;margin-top:2px">{{ a.priceText }}<span style="font-weight:400;font-size:13px;color:rgba(14,27,51,.75)">{{ a.priceSuffix }}</span></span>
             </div>
@@ -544,7 +544,7 @@ input,select,textarea,button{font-family:inherit}
               <sc-if value="{{ a.noImg }}"><span style="position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:12px;padding:0 10px;background:linear-gradient(165deg,#FBF8F2 0%,#F3EEE3 50%,#E7DFCE 100%);transform:{{ a.zoom }};transition:transform .6s ease"><img width="112" height="156" src="/assets/mark-gold-112x156.webp" alt="" draggable="false" style="width:{{ fr.markW }};height:auto;opacity:.3"></img><span style="font:600 10px/1.5 var(--font-sans);letter-spacing:.2em;color:#8E6C2F;text-transform:uppercase;text-align:center">Photographs coming soon</span></span></sc-if>
               <sc-if value="{{ a.hasImg }}" hint-placeholder-val="{{ false }}"><div role="img" aria-label="{{ a.title }}" style="position:absolute;inset:0;background:{{ a.photoBg }};transform:{{ a.zoom }};transition:transform .6s ease"></div></sc-if>
               <div style="position:absolute;top:14px;left:14px;right:72px;display:flex;flex-wrap:wrap;gap:6px">
-                <span style="display:inline-flex;align-items:center;min-height:28px;padding:0 12px;border-radius:999px;background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#0E1B33;font:600 12px/1 var(--font-sans);white-space:nowrap">Title Verified</span>
+                <sc-if value="{{ a.verified }}"><span style="display:inline-flex;align-items:center;min-height:28px;padding:0 12px;border-radius:999px;background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#0E1B33;font:600 12px/1 var(--font-sans);white-space:nowrap">Title Verified</span></sc-if>
                 <sc-if value="{{ a.showTag }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;min-height:28px;padding:0 12px;border-radius:999px;background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#0E1B33;font:600 12px/1 var(--font-sans);white-space:nowrap">{{ a.tagText }}</span></sc-if>
               </div>
               <span aria-hidden="true" style="position:absolute;top:0;right:0;padding:0 0 8px 8px;background:#FFFFFF;border-bottom-left-radius:24px">
@@ -557,9 +557,9 @@ input,select,textarea,button{font-family:inherit}
               <span style="font:600 11.5px var(--font-sans);letter-spacing:.16em;color:#8E6C2F;text-transform:uppercase">{{ a.location }}</span>
               <h3 style="margin:0;font:400 24px/1.15 var(--font-display);font-variant-numeric:lining-nums;color:#0E1B33">{{ a.title }}</h3>
               <div style="display:flex;flex-wrap:wrap;gap:6px 18px;font:400 14px var(--font-sans);color:rgba(14,27,51,.75)">
-                <span style="display:inline-flex;align-items:center;gap:7px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"></path></svg>{{ a.bedsText }}</span>
-                <span style="display:inline-flex;align-items:center;gap:7px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6 6.5 3.5a1.5 1.5 0 0 0-1-.5C4.7 3 4 3.7 4 4.5V17a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5M10 5 8 7M2 12h20M7 19v2M17 19v2"></path></svg>{{ a.baths }} bath</span>
-                <span style="display:inline-flex;align-items:center;gap:7px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"></path></svg>{{ a.size }} m²</span>
+                <sc-if value="{{ a.hasBeds }}"><span style="display:inline-flex;align-items:center;gap:7px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"></path></svg>{{ a.bedsText }}</span></sc-if>
+                <sc-if value="{{ a.hasBaths }}"><span style="display:inline-flex;align-items:center;gap:7px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6 6.5 3.5a1.5 1.5 0 0 0-1-.5C4.7 3 4 3.7 4 4.5V17a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5M10 5 8 7M2 12h20M7 19v2M17 19v2"></path></svg>{{ a.baths }} bath</span></sc-if>
+                <sc-if value="{{ a.hasSize }}"><span style="display:inline-flex;align-items:center;gap:7px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"></path></svg>{{ a.size }} m²</span></sc-if>
               </div>
               <span style="font:600 17px var(--font-sans);font-variant-numeric:lining-nums;color:#0E1B33;margin-top:2px">{{ a.priceText }}<span style="font-weight:400;font-size:13px;color:rgba(14,27,51,.75)">{{ a.priceSuffix }}</span></span>
             </div>
@@ -616,14 +616,14 @@ input,select,textarea,button{font-family:inherit}
     <a href="/find-property/" onClick="{{ go.find }}" style="justify-self:start;display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 18px;border-radius:999px;background:#F3EEE3;font:600 13.5px var(--font-sans);color:#0E1B33;text-decoration:none"><svg width="16" height="10" viewBox="0 0 24 10" fill="none" aria-hidden="true"><path d="M24 5H1.5M5.5 1l-4 4 4 4" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"></path></svg>All properties</a>
     <sc-if value="{{ lx.galDesk }}" hint-placeholder-val="{{ true }}">
       <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:12px">
-        <div style="position:relative;aspect-ratio:4/3;border-radius:24px;overflow:hidden;background:#E7DFCE"><span style="position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:12px;padding:0 10px;background:linear-gradient(165deg,#FBF8F2 0%,#F3EEE3 50%,#E7DFCE 100%);"><img width="112" height="156" src="/assets/mark-gold-112x156.webp" alt="" draggable="false" style="width:72px;height:auto;opacity:.3"></img><span style="font:600 10px/1.5 var(--font-sans);letter-spacing:.2em;color:#8E6C2F;text-transform:uppercase;text-align:center">Photographs coming soon</span></span><div role="img" aria-label="{{ cur.title }}" style="position:absolute;inset:0;background:{{ cur.photoBg }}"></div><div style="position:absolute;top:16px;left:16px;display:flex;flex-wrap:wrap;gap:6px"><span style="display:inline-flex;align-items:center;min-height:28px;padding:0 12px;border-radius:999px;background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#0E1B33;font:600 12px/1 var(--font-sans);white-space:nowrap">{{ cur.category }}</span><span style="display:inline-flex;align-items:center;min-height:28px;padding:0 12px;border-radius:999px;background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#0E1B33;font:600 12px/1 var(--font-sans);white-space:nowrap">Title Verified</span></div></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:12px"><sc-for list="{{ thumbs }}" as="t" hint-placeholder-count="4"><div style="position:relative;border-radius:20px;overflow:hidden;background:linear-gradient(165deg,#FBF8F2 0%,#F3EEE3 50%,#E7DFCE 100%);display:grid;place-items:center"><img width="112" height="156" src="/assets/mark-gold-112x156.webp" alt="" style="width:32px;height:auto;opacity:.25"></img></div></sc-for></div>
+        <div style="position:relative;aspect-ratio:4/3;border-radius:24px;overflow:hidden;background:#E7DFCE"><span style="position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:12px;padding:0 10px;background:linear-gradient(165deg,#FBF8F2 0%,#F3EEE3 50%,#E7DFCE 100%);"><img width="112" height="156" src="/assets/mark-gold-112x156.webp" alt="" draggable="false" style="width:72px;height:auto;opacity:.3"></img><span style="font:600 10px/1.5 var(--font-sans);letter-spacing:.2em;color:#8E6C2F;text-transform:uppercase;text-align:center">Photographs coming soon</span></span><div role="img" aria-label="{{ cur.title }}" style="position:absolute;inset:0;background:{{ cur.photoBg }}"></div><div style="position:absolute;top:16px;left:16px;display:flex;flex-wrap:wrap;gap:6px"><span style="display:inline-flex;align-items:center;min-height:28px;padding:0 12px;border-radius:999px;background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#0E1B33;font:600 12px/1 var(--font-sans);white-space:nowrap">{{ cur.category }}</span><sc-if value="{{ cur.verified }}"><span style="display:inline-flex;align-items:center;min-height:28px;padding:0 12px;border-radius:999px;background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#0E1B33;font:600 12px/1 var(--font-sans);white-space:nowrap">Title Verified</span></sc-if></div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:12px"><sc-for list="{{ thumbs }}" as="t" hint-placeholder-count="4"><div onClick="{{ t.pick }}" style="position:relative;border-radius:20px;overflow:hidden;background:linear-gradient(165deg,#FBF8F2 0%,#F3EEE3 50%,#E7DFCE 100%);display:grid;place-items:center;cursor:{{ t.cursor }}"><img width="112" height="156" src="/assets/mark-gold-112x156.webp" alt="" style="width:32px;height:auto;opacity:.25"></img><div role="img" aria-label="{{ t.alt }}" style="position:absolute;inset:0;background:{{ t.bg }}"></div></div></sc-for></div>
       </div>
     </sc-if>
     <sc-if value="{{ lx.galPhone }}">
       <div style="display:grid;grid-auto-flow:column;grid-auto-columns:88%;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin-right:-12px;padding-right:12px">
-        <div style="scroll-snap-align:start;position:relative;aspect-ratio:4/3;border-radius:24px;overflow:hidden;background:#E7DFCE"><span style="position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:12px;padding:0 10px;background:linear-gradient(165deg,#FBF8F2 0%,#F3EEE3 50%,#E7DFCE 100%);"><img width="112" height="156" src="/assets/mark-gold-112x156.webp" alt="" draggable="false" style="width:56px;height:auto;opacity:.3"></img><span style="font:600 10px/1.5 var(--font-sans);letter-spacing:.2em;color:#8E6C2F;text-transform:uppercase;text-align:center">Photographs coming soon</span></span><div role="img" aria-label="{{ cur.title }}" style="position:absolute;inset:0;background:{{ cur.photoBg }}"></div><div style="position:absolute;top:12px;left:12px;display:flex;flex-wrap:wrap;gap:6px"><span style="display:inline-flex;align-items:center;min-height:28px;padding:0 12px;border-radius:999px;background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#0E1B33;font:600 12px/1 var(--font-sans);white-space:nowrap">{{ cur.category }}</span><span style="display:inline-flex;align-items:center;min-height:28px;padding:0 12px;border-radius:999px;background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#0E1B33;font:600 12px/1 var(--font-sans);white-space:nowrap">Title Verified</span></div></div>
-        <sc-for list="{{ thumbs }}" as="t" hint-placeholder-count="4"><div style="scroll-snap-align:start;position:relative;aspect-ratio:4/3;border-radius:24px;overflow:hidden"><span style="position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:12px;padding:0 10px;background:linear-gradient(165deg,#FBF8F2 0%,#F3EEE3 50%,#E7DFCE 100%);"><img width="112" height="156" src="/assets/mark-gold-112x156.webp" alt="" draggable="false" style="width:48px;height:auto;opacity:.3"></img><span style="font:600 10px/1.5 var(--font-sans);letter-spacing:.2em;color:#8E6C2F;text-transform:uppercase;text-align:center">Photographs coming soon</span></span></div></sc-for>
+        <div style="scroll-snap-align:start;position:relative;aspect-ratio:4/3;border-radius:24px;overflow:hidden;background:#E7DFCE"><span style="position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:12px;padding:0 10px;background:linear-gradient(165deg,#FBF8F2 0%,#F3EEE3 50%,#E7DFCE 100%);"><img width="112" height="156" src="/assets/mark-gold-112x156.webp" alt="" draggable="false" style="width:56px;height:auto;opacity:.3"></img><span style="font:600 10px/1.5 var(--font-sans);letter-spacing:.2em;color:#8E6C2F;text-transform:uppercase;text-align:center">Photographs coming soon</span></span><div role="img" aria-label="{{ cur.title }}" style="position:absolute;inset:0;background:{{ cur.photoBg }}"></div><div style="position:absolute;top:12px;left:12px;display:flex;flex-wrap:wrap;gap:6px"><span style="display:inline-flex;align-items:center;min-height:28px;padding:0 12px;border-radius:999px;background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#0E1B33;font:600 12px/1 var(--font-sans);white-space:nowrap">{{ cur.category }}</span><sc-if value="{{ cur.verified }}"><span style="display:inline-flex;align-items:center;min-height:28px;padding:0 12px;border-radius:999px;background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#0E1B33;font:600 12px/1 var(--font-sans);white-space:nowrap">Title Verified</span></sc-if></div></div>
+        <sc-for list="{{ thumbsPhone }}" as="t" hint-placeholder-count="4"><div style="scroll-snap-align:start;position:relative;aspect-ratio:4/3;border-radius:24px;overflow:hidden"><span style="position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:12px;padding:0 10px;background:linear-gradient(165deg,#FBF8F2 0%,#F3EEE3 50%,#E7DFCE 100%);"><img width="112" height="156" src="/assets/mark-gold-112x156.webp" alt="" draggable="false" style="width:48px;height:auto;opacity:.3"></img><span style="font:600 10px/1.5 var(--font-sans);letter-spacing:.2em;color:#8E6C2F;text-transform:uppercase;text-align:center">Photographs coming soon</span></span><div role="img" aria-label="{{ t.alt }}" style="position:absolute;inset:0;background:{{ t.bg }}"></div></div></sc-for>
       </div>
     </sc-if>
     <div style="display:grid;grid-template-columns:{{ lx.cols }};gap:{{ lx.colGap }};align-items:start">
@@ -640,13 +640,18 @@ input,select,textarea,button{font-family:inherit}
         <dl style="margin:0;display:grid;grid-template-columns:{{ lx.specCols }};gap:10px">
           <sc-for list="{{ specs }}" as="s" hint-placeholder-count="6"><div style="display:grid;gap:4px;padding:16px 18px;border-radius:18px;background:#F3EEE3"><dt style="font:600 11px var(--font-sans);letter-spacing:.14em;text-transform:uppercase;color:#6B665C">{{ s.k }}</dt><dd style="margin:0;font:400 22px/1.2 var(--font-display);font-variant-numeric:lining-nums;color:#0E1B33">{{ s.v }}</dd></div></sc-for>
         </dl>
-        <div style="display:grid;gap:12px"><h2 style="margin:0;font:400 30px/1.1 var(--font-display);color:#0E1B33">About this property</h2><p style="margin:0;font:400 17px/1.7 var(--font-sans);color:#14171F;text-wrap:pretty">{{ cur.description }}</p></div>
-        <div style="display:grid;gap:14px;padding:{{ hm.cardPad }};border-radius:24px;background:#F3EEE3">
+        <sc-if value="{{ hasAbout }}"><div style="display:grid;gap:12px"><h2 style="margin:0;font:400 30px/1.1 var(--font-display);color:#0E1B33">About this property</h2><p style="margin:0;font:400 17px/1.7 var(--font-sans);color:#14171F;text-wrap:pretty;white-space:pre-line">{{ cur.description }}</p></div></sc-if>
+        <sc-if value="{{ hasFeatures }}"><div style="display:grid;gap:12px"><h2 style="margin:0;font:400 30px/1.1 var(--font-display);color:#0E1B33">Features</h2>
+          <ul style="margin:0;padding:0;list-style:none;display:grid;gap:12px">
+            <sc-for list="{{ features }}" as="f" hint-placeholder-count="3"><li style="display:flex;gap:10px;font:400 16px/1.5 var(--font-sans);color:#14171F"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="flex-shrink:0;margin-top:3px"><path d="M3 8.5l3.2 3L13 4.5" stroke="#C9A45C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{ f }}</li></sc-for>
+          </ul>
+        </div></sc-if>
+        <sc-if value="{{ cur.verified }}"><div style="display:grid;gap:14px;padding:{{ hm.cardPad }};border-radius:24px;background:#F3EEE3">
           <h2 style="margin:0;font:400 28px/1.1 var(--font-display);color:#0E1B33">What we verified</h2>
           <ul style="margin:0;padding:0;list-style:none;display:grid;gap:12px">
             <sc-for list="{{ lx.verified }}" as="v" hint-placeholder-count="3"><li style="display:flex;gap:10px;font:400 16px/1.5 var(--font-sans);color:#14171F"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="flex-shrink:0;margin-top:3px"><path d="M3 8.5l3.2 3L13 4.5" stroke="#C9A45C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{ v }}</li></sc-for>
           </ul>
-        </div>
+        </div></sc-if>
         <div style="display:grid;gap:12px"><h2 style="margin:0;font:400 30px/1.1 var(--font-display);color:#0E1B33">Location</h2>
           <div style="aspect-ratio:{{ lx.mapAR }};border-radius:24px;background:linear-gradient(165deg,#FBF8F2 0%,#F3EEE3 50%,#E7DFCE 100%);display:grid;place-content:center;justify-items:center;gap:10px"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8E6C2F" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0zM12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path></svg><span style="font:500 15px var(--font-sans);color:#0E1B33">{{ cur.location }}</span><span style="font:600 10px var(--font-sans);letter-spacing:.2em;color:#8E6C2F;text-transform:uppercase">Map coming soon</span></div>
         </div>
@@ -680,7 +685,7 @@ input,select,textarea,button{font-family:inherit}
               <sc-if value="{{ a.noImg }}"><span style="position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:12px;padding:0 10px;background:linear-gradient(165deg,#FBF8F2 0%,#F3EEE3 50%,#E7DFCE 100%);transform:{{ a.zoom }};transition:transform .6s ease"><img width="112" height="156" src="/assets/mark-gold-112x156.webp" alt="" draggable="false" style="width:{{ fr.markW }};height:auto;opacity:.3"></img><span style="font:600 10px/1.5 var(--font-sans);letter-spacing:.2em;color:#8E6C2F;text-transform:uppercase;text-align:center">Photographs coming soon</span></span></sc-if>
               <sc-if value="{{ a.hasImg }}" hint-placeholder-val="{{ false }}"><div role="img" aria-label="{{ a.title }}" style="position:absolute;inset:0;background:{{ a.photoBg }};transform:{{ a.zoom }};transition:transform .6s ease"></div></sc-if>
               <div style="position:absolute;top:14px;left:14px;right:72px;display:flex;flex-wrap:wrap;gap:6px">
-                <span style="display:inline-flex;align-items:center;min-height:28px;padding:0 12px;border-radius:999px;background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#0E1B33;font:600 12px/1 var(--font-sans);white-space:nowrap">Title Verified</span>
+                <sc-if value="{{ a.verified }}"><span style="display:inline-flex;align-items:center;min-height:28px;padding:0 12px;border-radius:999px;background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#0E1B33;font:600 12px/1 var(--font-sans);white-space:nowrap">Title Verified</span></sc-if>
                 <sc-if value="{{ a.showTag }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;min-height:28px;padding:0 12px;border-radius:999px;background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#0E1B33;font:600 12px/1 var(--font-sans);white-space:nowrap">{{ a.tagText }}</span></sc-if>
               </div>
               <span aria-hidden="true" style="position:absolute;top:0;right:0;padding:0 0 8px 8px;background:#F3EEE3;border-bottom-left-radius:24px">
@@ -693,9 +698,9 @@ input,select,textarea,button{font-family:inherit}
               <span style="font:600 11.5px var(--font-sans);letter-spacing:.16em;color:#8E6C2F;text-transform:uppercase">{{ a.location }}</span>
               <h3 style="margin:0;font:400 24px/1.15 var(--font-display);font-variant-numeric:lining-nums;color:#0E1B33">{{ a.title }}</h3>
               <div style="display:flex;flex-wrap:wrap;gap:6px 18px;font:400 14px var(--font-sans);color:rgba(14,27,51,.75)">
-                <span style="display:inline-flex;align-items:center;gap:7px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"></path></svg>{{ a.bedsText }}</span>
-                <span style="display:inline-flex;align-items:center;gap:7px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6 6.5 3.5a1.5 1.5 0 0 0-1-.5C4.7 3 4 3.7 4 4.5V17a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5M10 5 8 7M2 12h20M7 19v2M17 19v2"></path></svg>{{ a.baths }} bath</span>
-                <span style="display:inline-flex;align-items:center;gap:7px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"></path></svg>{{ a.size }} m²</span>
+                <sc-if value="{{ a.hasBeds }}"><span style="display:inline-flex;align-items:center;gap:7px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"></path></svg>{{ a.bedsText }}</span></sc-if>
+                <sc-if value="{{ a.hasBaths }}"><span style="display:inline-flex;align-items:center;gap:7px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6 6.5 3.5a1.5 1.5 0 0 0-1-.5C4.7 3 4 3.7 4 4.5V17a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5M10 5 8 7M2 12h20M7 19v2M17 19v2"></path></svg>{{ a.baths }} bath</span></sc-if>
+                <sc-if value="{{ a.hasSize }}"><span style="display:inline-flex;align-items:center;gap:7px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"></path></svg>{{ a.size }} m²</span></sc-if>
               </div>
               <span style="font:600 17px var(--font-sans);font-variant-numeric:lining-nums;color:#0E1B33;margin-top:2px">{{ a.priceText }}<span style="font-weight:400;font-size:13px;color:rgba(14,27,51,.75)">{{ a.priceSuffix }}</span></span>
             </div>
@@ -1105,6 +1110,8 @@ const POSTS = [
 ];
 const BLOG_CATS = ['All', 'For Landlords', 'For Tenants', 'For Buyers', 'Diaspora', 'Market Insights'];
 const QUOTES = [];
+// Sample properties, shown until the first real listing is published. Real listings come from the database:
+// inline on find-property and listing pages (window.NUBIA_LISTINGS), else /listings.json.
 const SEED = [
   { id: 1, title: 'The Arcadia, 2B', location: 'Kilimani', category: 'Units To Let', deal: 'Rent', beds: 2, baths: 2, size: 110, price: 95000, status: 'Available', published: true, image: '', description: 'Bright corner apartment with a balcony, backup generator, borehole water and secure parking.' },
   { id: 2, title: 'Riverside Court, 4A', location: 'Westlands', category: 'Units To Let', deal: 'Rent', beds: 3, baths: 3, size: 165, price: 180000, status: 'Available', published: true, image: '', description: 'Three bedrooms, all en-suite, with a gym, pool and 24-hour security.' },
@@ -1145,12 +1152,14 @@ const ROUTES = {
 const PATH_PG = Object.fromEntries(Object.entries(ROUTES).map(([k, r]) => [r.path, k]));
 const pathPg = () => { const p = String(location.pathname || '/').replace(/index\.html$/, '').replace(/\/?$/, '/'); return PATH_PG[p] || null; };
 const ROUTED = typeof document !== 'undefined' && (!!document.querySelector('meta[name="nubia-routed"]') || /(^|\.)nubiakcestates\.co\.ke$/.test(location.hostname));
+// Same text as the listing page's meta description (site/inc/site.php).
+const listingDesc = a => { let t = String(a.summary || a.description || '').replace(/\s+/g, ' ').trim(); if (!t) t = a.category + (a.deal === 'Rent' ? ' to let' : ' for sale') + ' in ' + a.location + ', KES ' + Number(a.price || 0).toLocaleString('en-KE') + (a.deal === 'Rent' ? ' a month' : '') + '.'; return t.length > 160 ? t.slice(0, 157).trim() + '…' : t; };
 const setHeadTag = (sel, make, attr, val) => { let el = document.head.querySelector(sel); if (!el) { el = make(); document.head.appendChild(el); } el.setAttribute(attr, val); };
 class Component extends DCLogic {
   state = { vw: typeof window !== 'undefined' ? window.innerWidth : 1280, menuOpen: false, view: 'site', pg: 'home', heroTab: 'Sale', heroLoc: 'All locations', heroCat: 'All categories', apts: this.load(), deal: 'All', cat: 'All categories', loc: 'All locations', openId: null, editId: null, form: EMPTY, sent: false };
-  slug(a) { return a.id + '-' + String(a.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
-  goListing(a) { const hash = '#/property/' + this.slug(a); if (location.hash !== hash) history.pushState(null, '', hash); this.setState({ pg: 'listing', listingId: a.id, view: 'site', enqSent: false, shared: false, menuOpen: false }); window.scrollTo(0, 0); }
-  readHash() { const m = /^#\/property\/(\d+)/.exec(location.hash || ''); if (m) { const id = Number(m[1]); if (this.state.apts.some(a => a.id === id)) { this.setState({ pg: 'listing', listingId: id, view: 'site' }); return; } } if (ROUTED) { const p = pathPg(); if (p && p !== this.state.pg) { this._pop = true; this.setState({ pg: p, view: 'site', openId: null, menuOpen: false }); } else if (!p && this.state.pg === 'listing') this.setState({ pg: 'find' }); return; } if (this.state.pg === 'listing') this.setState({ pg: 'find' }); }
+  slug(a) { return a.slug || (a.id + '-' + String(a.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')); }
+  goListing(a) { if (a.slug) { const path = '/property/' + a.slug; if (location.pathname !== path) history.pushState(null, '', path); } else { const hash = '#/property/' + this.slug(a); if (location.hash !== hash) history.pushState(null, '', hash); } this.setState({ pg: 'listing', listingId: a.id, galIdx: 0, view: 'site', enqSent: false, shared: false, menuOpen: false }); window.scrollTo(0, 0); }
+  readHash() { const pm = /^\/property\/([a-z0-9-]+)\/?$/.exec(location.pathname || ''); if (pm) { const a = this.state.apts.find(x => x.slug === pm[1]); if (a && (this.state.pg !== 'listing' || this.state.listingId !== a.id)) this.setState({ pg: 'listing', listingId: a.id, galIdx: 0, view: 'site' }); return; } const m =/^#\/property\/(\d+)/.exec(location.hash || ''); if (m) { const id = Number(m[1]); if (this.state.apts.some(a => a.id === id)) { this.setState({ pg: 'listing', listingId: id, view: 'site' }); return; } } if (ROUTED) { const p = pathPg(); if (p && p !== this.state.pg) { this._pop = true; this.setState({ pg: p, view: 'site', openId: null, menuOpen: false }); } else if (!p && this.state.pg === 'listing') this.setState({ pg: 'find' }); return; } if (this.state.pg === 'listing') this.setState({ pg: 'find' }); }
   syncRoute() {
     const r = ROUTES[this.state.pg];
     if (ROUTED && r && this.state.view === 'site') { if (this._pop) this._pop = false; else if (location.pathname + location.hash !== r.path) history.pushState(null, '', r.path); }
@@ -1158,18 +1167,41 @@ class Component extends DCLogic {
   }
   setHead() {
     if (typeof document === 'undefined') return;
-    const r = ROUTES[this.state.pg] || ROUTES.find; const url = SITE + r.path;
+    const la = this.state.pg === 'listing' && this.state.apts.find(a => a.id === this.state.listingId && a.slug);
+    const r = la ? { title: la.title + ' | Nubia KC Estates', desc: listingDesc(la), path: '/property/' + this.slug(la) } : (ROUTES[this.state.pg] || ROUTES.find); const url = SITE + r.path;
     document.title = r.title;
     const meta = (k, v, attr) => setHeadTag('meta[' + attr + '="' + k + '"]', () => { const m = document.createElement('meta'); m.setAttribute(attr, k); return m; }, 'content', v);
     meta('description', r.desc, 'name'); meta('og:title', r.title, 'property'); meta('og:description', r.desc, 'property'); meta('og:url', url, 'property');
     setHeadTag('link[rel="canonical"]', () => { const l = document.createElement('link'); l.rel = 'canonical'; return l; }, 'href', url);
   }
-  load() { return SEED; }
+  load() { return typeof window !== 'undefined' && Array.isArray(window.NUBIA_LISTINGS) && window.NUBIA_LISTINGS.length ? window.NUBIA_LISTINGS : SEED; }
+  isReal() { return this.state.apts.some(a => a.slug); }
+  queryFilters() {
+    const q = new URLSearchParams(location.search), out = {};
+    const deal = { rent: 'Rent', sale: 'Sale' }[q.get('purpose')]; if (deal) out.deal = deal;
+    if (q.get('area')) out.loc = q.get('area');
+    const t = this.state.apts.find(a => a.typeKey === q.get('type')); if (t) out.cat = t.category;
+    if (/^[rs][1-4]$/.test(q.get('price') || '')) out.priceKey = q.get('price');
+    if (/^[0-4]$/.test(q.get('bedrooms') || '')) out.bedsKey = q.get('bedrooms');
+    return out;
+  }
+  syncQuery() {
+    const s = this.state, q = new URLSearchParams();
+    if (s.deal === 'Rent' || s.deal === 'Sale') q.set('purpose', s.deal.toLowerCase());
+    if (s.loc && s.loc !== 'All locations') q.set('area', s.loc);
+    const t = s.apts.find(a => a.category === s.cat); if (t) q.set('type', t.typeKey);
+    if (s.priceKey && s.priceKey !== 'any') q.set('price', s.priceKey);
+    if (s.bedsKey && s.bedsKey !== 'any') q.set('bedrooms', s.bedsKey);
+    const qs = q.toString(), want = location.pathname + (qs ? '?' + qs : '');
+    if (want !== location.pathname + location.search) history.replaceState(null, '', want);
+  }
   componentDidMount() {
     const ssr = typeof document !== 'undefined' && document.getElementById('ssr'); if (ssr) { this._heroPlayed = true; this._phDone = new Set([pathPg() || 'home']); ssr.remove(); const ssrD = document.getElementById('ssr-d'); if (ssrD) ssrD.remove(); }
     window.__nubiaGo = k => { this.setState({ pg: k, view: 'site', openId: null, menuOpen: false }); window.scrollTo(0, 0); };
     this.setHead();
     this.onHash = () => this.readHash(); window.addEventListener('popstate', this.onHash); window.addEventListener('hashchange', this.onHash); this.readHash();
+    if (pathPg() === 'find') this.setState(this.queryFilters());
+    if (!Array.isArray(window.NUBIA_LISTINGS)) fetch('/listings.json').then(r => r.ok ? r.json() : []).then(list => { if (Array.isArray(list) && list.length) this.setState({ apts: list }, () => this.readHash()); }).catch(() => {});
     setTimeout(() => this.forceUpdate(), 50);
     this.onPar = () => { if (!this.parRaf) this.parRaf = requestAnimationFrame(() => { this.parRaf = 0; this.parallax(); }); };
     window.addEventListener('scroll', this.onPar, { passive: true }); window.addEventListener('resize', this.onPar);
@@ -1326,6 +1358,7 @@ class Component extends DCLogic {
   componentDidUpdate(pp, ps) {
     this.initHero(); this.initPageHero();
     const rk = this.state.view + ':' + this.state.pg; if (this._rk !== rk) { this._rk = rk; this.syncRoute(); }
+    if (ROUTED && this.state.pg === 'find' && this.state.view === 'site' && pathPg() === 'find' && this.isReal()) this.syncQuery();
     
     
   }
@@ -1347,6 +1380,8 @@ class Component extends DCLogic {
       dealText: rent ? 'To let' : 'For sale',
       priceText: 'KES ' + Number(a.price || 0).toLocaleString('en-KE'), priceSuffix: rent ? ' / month' : '',
       bedsText: Number(a.beds) === 0 ? 'Studio' : a.beds + ' bed',
+      hasBeds: a.beds != null && a.beds !== '', hasBaths: a.baths != null && a.baths !== '', hasSize: a.size != null && a.size !== '',
+      verified: a.verified !== false,
       bg: a.image ? `center / cover no-repeat url("${a.image}")` : '#F3EEE3',
       noImg: !a.image, badgeBg: b[0], badgeFg: b[1],
       pubLabel: a.published ? 'Live' : 'Hidden',
@@ -1387,7 +1422,7 @@ class Component extends DCLogic {
       hdrBg: this.state.hdrSolid ? 'rgba(255,255,255,.96)' : 'transparent', hdrBlur: this.state.hdrSolid ? 'blur(14px)' : 'none', hdrT: (this.state.hdrHide && !menuOn) ? 'translateY(-100%)' : 'none', hdrBd: (sm && this.state.pg === 'home' && !this.state.pastHero) ? 'transparent' : 'rgba(201,164,92,.25)', hdrCta: !(sm && this.state.pg === 'home' && !this.state.pastHero), waPad: mob ? '0' : '18px', waH: mob ? '48px' : '56px', modalPad: sm ? '0' : '24px', modalMaxH: sm ? '100vh' : '90vh', modalH: sm ? '100vh' : 'auto' };
     const frList = pub.filter(a => a.status === 'Available').slice(0, 8);
     const frShowTag = new Set(frList.map(a => a.deal)).size > 1;
-    const card = (a, showTag) => { const v = this.vm(a); const hov = !sm && this.state.hovId === a.id; return { ...v, hasImg: !!a.image, photoBg: a.image ? 'center / cover no-repeat url("' + a.image + '")' : 'transparent', showTag, tagText: a.deal === 'Rent' ? 'To let' : 'For sale', location: a.location === "Murang'a" ? "Murang'a" : a.location, zoom: hov ? 'scale(1.04)' : 'scale(1)', ul: hov ? '#C9A45C' : 'transparent', arrow: hov ? 'translateX(5px)' : 'none', enter: () => this.setState({ hovId: a.id }), leave: () => this.setState(s => s.hovId === a.id ? { hovId: null } : null), openCard: e => { if (this._dragged) { e.preventDefault(); return; } v.open && v.open(e); } };};
+    const card = (a, showTag) => { const v = this.vm(a); const hov = !sm && this.state.hovId === a.id; return { ...v, hasImg: !!a.image, photoBg: a.image ? 'center / cover no-repeat url("' + (a.thumb || a.image) + '")' : 'transparent', showTag, tagText: a.deal === 'Rent' ? 'To let' : 'For sale', location: a.location === "Murang'a" ? "Murang'a" : a.location, zoom: hov ? 'scale(1.04)' : 'scale(1)', ul: hov ? '#C9A45C' : 'transparent', arrow: hov ? 'translateX(5px)' : 'none', enter: () => this.setState({ hovId: a.id }), leave: () => this.setState(s => s.hovId === a.id ? { hovId: null } : null), openCard: e => { if (this._dragged) { e.preventDefault(); return; } v.open && v.open(e); } };};
 
     const RENT_P = [['r1', 'Under KES 30,000', 0, 30000], ['r2', 'KES 30,000 to 70,000', 30000, 70000], ['r3', 'KES 70,000 to 150,000', 70000, 150000], ['r4', 'Over KES 150,000', 150000, Infinity]];
     const SALE_P = [['s1', 'Under KES 10M', 0, 1e7], ['s2', 'KES 10M to 25M', 1e7, 2.5e7], ['s3', 'KES 25M to 50M', 2.5e7, 5e7], ['s4', 'Over KES 50M', 5e7, Infinity]];
@@ -1397,13 +1432,17 @@ class Component extends DCLogic {
     const bedsKey = this.state.bedsKey || 'any', sortKey = this.state.sortKey || 'new';
     const live = a => a.status !== 'Let' && a.status !== 'Sold';
     let matches = apts.filter(a => a.published && live(a) && (deal === 'All' || a.deal === deal) && (cat === 'All categories' || a.category === cat) && (loc === 'All locations' || a.location === loc) && (!pr || (Number(a.price) >= pr[2] && Number(a.price) < pr[3])) && (bedsKey === 'any' || (bedsKey === '0' ? Number(a.beds) === 0 : Number(a.beds) >= Number(bedsKey))));
-    matches = matches.slice().sort((x, y) => sortKey === 'low' ? x.price - y.price : sortKey === 'high' ? y.price - x.price : y.id - x.id);
+    matches = matches.slice().sort((x, y) => sortKey === 'low' ? x.price - y.price : sortKey === 'high' ? y.price - x.price : (x.rank != null && y.rank != null ? x.rank - y.rank : y.id - x.id));
     const showN = this.state.showN || 6;
     const nounFor = n => (deal === 'Rent' ? (n === 1 ? 'home to let' : 'homes to let') : deal === 'Sale' ? (n === 1 ? 'property for sale' : 'properties for sale') : (n === 1 ? 'property' : 'properties'));
     const activeCount = [cat !== 'All categories', loc !== 'All locations', priceKey !== 'any', bedsKey !== 'any'].filter(Boolean).length;
     const cur = apts.find(a => a.id === this.state.listingId);
-    const curV = cur ? card(cur, true) : {};
-    const listUrl = cur ? (location.href.split('#')[0] + '#/property/' + this.slug(cur)) : '';
+    // Gallery: the chosen photo is large; on wide screens the next four sit beside it and can be clicked.
+    const pics = cur && Array.isArray(cur.photos) ? cur.photos : [];
+    const galIdx = pics[this.state.galIdx || 0] ? (this.state.galIdx || 0) : 0;
+    const curV = cur ? { ...card(cur, true), photoBg: pics[galIdx] ? 'center / cover no-repeat url("' + pics[galIdx].src + '")' : 'transparent' } : {};
+    const others = pics.map((p, i) => ({ p, i })).filter(o => o.i !== galIdx);
+    const listUrl = !cur ? '' : cur.slug ? SITE + '/property/' + cur.slug : (location.href.split('#')[0] + '#/property/' + this.slug(cur));
     const simList = cur ? apts.filter(a => a.published && live(a) && a.id !== cur.id).sort((x, y) => ((y.location === cur.location) * 2 + (y.category === cur.category)) - ((x.location === cur.location) * 2 + (x.category === cur.category))).slice(0, 3) : [];
     const tabsFor = (val, set) => [['All', 'All'], ['Rent', 'To let'], ['Sale', 'For sale']].map(([v, label]) => ({ label, on: val === v, bg: val === v ? '#0E1B33' : 'transparent', fg: val === v ? '#FBF8F2' : '#0E1B33', pick: () => set(v) }));
     const fsDeal = this.state.fsDeal || 'Rent';
@@ -1430,11 +1469,15 @@ class Component extends DCLogic {
       hasRecent: apts.some(a => a.published && !live(a)),
       sheetOpen: !!this.state.sheet && this.state.vw < 1100, openSheet: () => this.setState({ sheet: true }), closeSheet: () => this.setState({ sheet: false }),
       sheetBtn: 'Show ' + matches.length + ' ' + (matches.length === 1 ? 'result' : 'results'),
-      cur: curV, thumbs: [1, 2, 3, 4],
-      specs: cur ? [['Type', cur.category], ['Bedrooms', Number(cur.beds) === 0 ? 'Studio' : cur.beds], ['Bathrooms', cur.baths], ['Size', cur.size + ' m²'], ['Status', cur.status], ['Location', cur.location === "Murang'a" ? "Murang'a" : cur.location]].map(([k, v]) => ({ k, v })) : [],
+      cur: curV,
+      thumbs: [0, 1, 2, 3].map(n => { const o = others[n]; return o ? { bg: 'center / cover no-repeat url("' + (o.p.sm || o.p.src) + '")', alt: o.p.alt, cursor: 'pointer', pick: () => this.setState({ galIdx: o.i }) } : { bg: 'transparent', alt: '', cursor: 'default', pick: () => {} }; }),
+      thumbsPhone: cur && !cur.slug ? [1, 2, 3, 4].map(() => ({ bg: 'transparent', alt: '' })) : pics.slice(1).map(p => ({ bg: 'center / cover no-repeat url("' + p.src + '")', alt: p.alt })),
+      specs: cur ? [['Type', cur.category], ['Bedrooms', cur.beds == null ? null : Number(cur.beds) === 0 ? 'Studio' : cur.beds], ['Bathrooms', cur.baths], ['Size', cur.size == null ? null : cur.size + ' m²'], ['Status', cur.status], ['Location', cur.location === "Murang'a" ? "Murang'a" : cur.location]].filter(([k, v]) => v != null && v !== '').map(([k, v]) => ({ k, v })) : [],
+      features: cur && Array.isArray(cur.features) ? cur.features : [], hasFeatures: !!(cur && Array.isArray(cur.features) && cur.features.length), hasAbout: !!(cur && cur.description),
       waHref: 'https://wa.me/254703277912?text=' + encodeURIComponent(cur ? "Hello Nubia KC Estates, I'm interested in " + cur.title + ' (' + cur.location + '). ' + listUrl : 'Hello Nubia KC Estates'),
       enqMsg: cur ? "I'm interested in " + cur.title + '. Please contact me.' : '',
-      enqSent: !!this.state.enqSent, enqOpen: !this.state.enqSent, le: this.state.leErr || {}, leFail: !!this.state.leFail, leBtn: this.state.leBusy ? 'Sending…' : 'Send enquiry',
+      // On real listings the enquiry form stays hidden until the website has its own enquiries inbox; WhatsApp and phone remain.
+      enqSent: cur && cur.slug ? false : !!this.state.enqSent, enqOpen: cur && cur.slug ? false : !this.state.enqSent, le: this.state.leErr || {}, leFail: !!this.state.leFail, leBtn: this.state.leBusy ? 'Sending…' : 'Send enquiry',
       sendEnq: async e => { e.preventDefault(); const d = readForm(e.currentTarget); const err = checkCommon(d, false); this.setState({ leErr: err, leFail: false }); if (Object.keys(err).length) return; this.setState({ leBusy: true }); const ok = await sendForm({ ...d, form: 'Listing enquiry', listing: cur ? cur.title : '', listing_url: listUrl, _subject: 'Listing enquiry: ' + (cur ? cur.title : '') }); this.setState(ok ? { leBusy: false, enqSent: true } : { leBusy: false, leFail: true }); },
       shareLabel: this.state.shared ? 'Link copied' : 'Share',
       share: () => { const data = { title: cur ? cur.title : 'Nubia KC Estates', url: listUrl }; if (navigator.share) navigator.share(data).catch(() => {}); else if (navigator.clipboard) navigator.clipboard.writeText(listUrl).then(() => this.setState({ shared: true })); },
@@ -1482,7 +1525,7 @@ class Component extends DCLogic {
           
           realQuotes, hasQuotes: realQuotes.length > 0,
           ins: { bg: realQuotes.length ? '#FFFFFF' : '#F3EEE3', card: realQuotes.length ? '#F3EEE3' : '#FFFFFF' }, insFeat: ins[0] || {}, insRest: ins.slice(1, 4),
-          heroCatOpts: ['All categories', ...CATEGORIES.map(c => c.name)].map(v => ({ v, l: v }))
+          heroCatOpts: ['All categories', ...(apts.some(a => a.slug) ? new Set(apts.map(a => a.category)) : CATEGORIES.map(c => c.name))].map(v => ({ v, l: v }))
         }; })(),
       h: (() => { const vw = this.state.vw, hd = vw >= 768, hot = this.state.heroHot; return {
         mt: hd ? '-96px' : '-84px', secPad: hd ? '96px 24px 24px' : '12px 0 0',
@@ -1555,7 +1598,7 @@ class Component extends DCLogic {
       heroLocOptions: ['All locations', ...LOCATIONS], heroLocOpts: ['All locations', ...LOCATIONS].map(v => ({ v, l: v })),
       goHomeEnq: e => { if (e && e.preventDefault) e.preventDefault(); this.setState({ cTab: 'home', cDone: false, cErr: {} }); goPg('contact')(e); },
       goHowOwners: e => { if (e && e.preventDefault) e.preventDefault(); this.setState({ how: 'owners', pg: 'about', view: 'site', openId: null, menuOpen: false }); window.scrollTo(0, 0); setTimeout(() => goTo('about-how'), 120); },
-      goOwner: e => { if (e && e.preventDefault) e.preventDefault(); this.setState({ cTab: 'owner', cDone: false, cErr: {} }); goPg('contact')(e); }, heroCatOptions: ['All categories', ...CATEGORIES.map(c => c.name)],
+      goOwner: e => { if (e && e.preventDefault) e.preventDefault(); this.setState({ cTab: 'owner', cDone: false, cErr: {} }); goPg('contact')(e); }, heroCatOptions: ['All categories', ...(apts.some(a => a.slug) ? new Set(apts.map(a => a.category)) : CATEGORIES.map(c => c.name))],
       pickHeroLoc: e => this.setState({ heroLoc: e.target.value }), pickHeroCat: e => this.setState({ heroCat: e.target.value }),
       heroGo: e => { e.preventDefault(); this.setState(s => ({ pg: 'find', deal: s.heroTab, cat: s.heroCat, loc: s.heroLoc })); window.scrollTo(0, 0); },
       forYou: frList.map(a => card(a, frShowTag)),

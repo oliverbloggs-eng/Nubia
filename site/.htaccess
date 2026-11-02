@@ -1,6 +1,6 @@
 # Nubia KC Estates — Apache settings (Hostinger, public_html)
 Options -Indexes
-DirectoryIndex index.html
+DirectoryIndex index.php index.html
 
 <IfModule mod_rewrite.c>
 RewriteEngine On
@@ -19,6 +19,14 @@ RewriteCond %{REQUEST_URI} !/$
 RewriteRule ^ %{REQUEST_URI}/ [L,R=301]
 # Keep internal files out of search
 RewriteRule ^source/ - [F,L]
+# Shared PHP code and the deploy's record files are never served
+RewriteRule ^inc/ - [F,L]
+RewriteRule ^\.ftp-deploy - [F,L]
+# Listings from the database: a page per listing, the sitemap and the app's data
+RewriteRule ^property/([a-z0-9-]+)/$ /property/$1 [L,R=301]
+RewriteRule ^property/([a-z0-9-]+)$ property/index.php?slug=$1 [L,QSA]
+RewriteRule ^sitemap\.xml$ sitemap.php [L]
+RewriteRule ^listings\.json$ property/index.php?format=json [L]
 </IfModule>
 
 ErrorDocument 404 /404.html
@@ -39,6 +47,8 @@ AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application
 ExpiresActive On
 ExpiresDefault "access plus 1 hour"
 ExpiresByType text/html "access plus 0 seconds"
+ExpiresByType application/json "access plus 0 seconds"
+ExpiresByType application/xml "access plus 0 seconds"
 ExpiresByType text/css "access plus 1 week"
 ExpiresByType application/javascript "access plus 1 week"
 ExpiresByType image/webp "access plus 1 year"

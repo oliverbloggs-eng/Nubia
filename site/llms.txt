@@ -17,6 +17,7 @@ AI and LLM crawlers may read and summarise the public pages listed below. The sa
 - [Home](https://nubiakcestates.com/): services, how we differ, areas we manage
 - [About us](https://nubiakcestates.com/about/): who we are, leadership, how handover works, payment options
 - [Find property](https://nubiakcestates.com/find-property/): homes and land to rent or buy
+- Property listings: one page per home or plot on the market, at https://nubiakcestates.com/property/ followed by the listing name; all are in the sitemap
 - [Blog](https://nubiakcestates.com/blog/): guides for landlords, buyers and diaspora owners
 - [How to Invest in Real Estate in Kenya: A Beginner’s Guide](https://nubiakcestates.com/blog/how-to-invest-in-real-estate-in-kenya/)
 - [Contact](https://nubiakcestates.com/contact/): enquiries for owners, tenants and buyers
