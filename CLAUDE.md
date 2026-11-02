@@ -8,8 +8,9 @@ Nubia KC Estates, a real-estate company in Kenya (Nairobi, Kilimani, Westlands, 
 ## Repo layout
 - `site/` — public website, deployed to `public_html/` (nubiakcestates.com). 9 pages, live, SEO done. Do not change page design, copy, meta tags, sitemap or URLs unless asked.
 - `system/` — management system, deployed to `public_html/system/` (system.nubiakcestates.com). Plain PHP 8 + MySQL.
-- `shared/` — `db.php`, `images.php`, `config.php` (not in Git). Deployed to `nubia-shared/` OUTSIDE the web root. Both site and system include it.
-- `.github/workflows/deploy.yml` — FTP deploy on push to `main`.
+- `shared/` — `db.php`, `images.php`, `listings.php`, `config.php` (not in Git). Lives in `nubia-shared/` OUTSIDE the web root. Both site and system include it.
+- `.github/workflows/deploy.yml` — FTP deploy on push to `main`. Hostinger FTP logins always start inside `public_html`, so `server-dir` paths are relative to it. It uploads only `site/` (to `public_html/`) and `system/` (to `public_html/system/`).
+- `shared/` is NOT deployed: FTP cannot reach outside `public_html`. Its files must be uploaded by hand to `nubia-shared/` in hPanel > File Manager. Whenever a change touches `shared/`, always tell me exactly which shared files changed and need uploading.
 
 ## Local setup (Laragon, Windows)
 - Repo folder in `C:\laragon\www\nubia`. Local address `http://nubia.test`.
