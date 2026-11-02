@@ -30,6 +30,9 @@ jobs:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASS }}
+          protocol: ftps
+          security: loose
+          timeout: 120000
           local-dir: ./site/
           server-dir: public_html/
           state-name: .ftp-deploy-site.json
@@ -45,6 +48,9 @@ jobs:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASS }}
+          protocol: ftps
+          security: loose
+          timeout: 120000
           local-dir: ./system/
           server-dir: public_html/system/
           state-name: .ftp-deploy-system.json
@@ -55,6 +61,9 @@ jobs:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASS }}
+          protocol: ftps
+          security: loose
+          timeout: 120000
           local-dir: ./shared/
           server-dir: nubia-shared/
           state-name: .ftp-deploy-shared.json
