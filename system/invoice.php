@@ -16,7 +16,9 @@ if ($receipt) {
 }
 if (!$d) { page_start($title); echo '<div class="card empty">Not found.</div>'; page_end(); exit; }
 
-$bal = balance((int)$d['unit_id'], (int)$d['client_id']);
+// Receipt: the balance straight after this payment, so an old receipt never changes.
+// Invoice: the account balance today.
+$bal = $receipt ? balance_after_payment($d) : balance((int)$d['unit_id'], (int)$d['client_id']);
 $readings = $receipt ? [] : invoice_readings((int)$d['id']);
 page_start($title, $receipt ? 'payments' : 'billing');
 ?>
@@ -47,7 +49,11 @@ page_start($title, $receipt ? 'payments' : 'billing');
       <tfoot><tr><td>Invoice total</td><td class="num"><?= money($d['total']) ?></td></tr></tfoot>
     <?php endif; ?>
   </table>
+  <?php if ($receipt): ?>
+  <p style="margin-top:18px"><strong><?= $bal > 0 ? 'Balance after this payment: ' . money($bal) : ($bal < 0 ? 'Balance after this payment: in credit by ' . money(-$bal) : 'Balance after this payment: fully paid up.') ?></strong></p>
+  <?php else: ?>
   <p style="margin-top:18px"><strong><?= $bal > 0 ? 'Balance due on your account: ' . money($bal) : ($bal < 0 ? 'Your account is in credit by ' . money(-$bal) : 'Your account is fully paid up.') ?></strong></p>
+  <?php endif; ?>
   <?php if (!$receipt && !empty($s['payment_instructions'])): ?><p class="muted"><?= e($s['payment_instructions']) ?></p><?php endif; ?>
   <p class="muted small" style="margin-top:30px">Thank you. <?= e($s['company_name']) ?></p>
 </div>

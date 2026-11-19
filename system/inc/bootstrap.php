@@ -237,6 +237,21 @@ function reading_line(array $r): string
         . ($r['meter_replaced'] ? ' (meter replaced)' : '');
 }
 
+/**
+ * Balance on an account straight after one payment: invoices up to and including
+ * the payment's month, minus payments up to and including this one.
+ * Later invoices and payments are left out, so an old receipt never changes.
+ */
+function balance_after_payment(array $payment): float
+{
+    $period = substr($payment['paid_on'], 0, 7);
+    $inv = (float)val('SELECT COALESCE(SUM(total),0) FROM invoices WHERE unit_id=? AND client_id=? AND period <= ?',
+        [$payment['unit_id'], $payment['client_id'], $period]);
+    $pay = (float)val('SELECT COALESCE(SUM(amount),0) FROM payments WHERE unit_id=? AND client_id=? AND (paid_on < ? OR (paid_on = ? AND id <= ?))',
+        [$payment['unit_id'], $payment['client_id'], $payment['paid_on'], $payment['paid_on'], $payment['id']]);
+    return round($inv - $pay, 2);
+}
+
 /** Kenyan phone number in international form for WhatsApp links. */
 function wa_number(?string $phone): string
 {
