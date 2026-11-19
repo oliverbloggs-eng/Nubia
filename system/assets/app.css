@@ -219,11 +219,22 @@ fieldset.plain{border:0;padding:0;margin:0;min-width:0}
   .stat .value{font-size:24px}
 }
 
+/* Printing: a zero page margin leaves the browser no room for its own header and
+   footer (page title, date, web address), so the margin goes on the content instead.
+   box-decoration-break repeats the padding on every printed page. */
 @media print{
-  @page{margin:12mm}
-  body{background:#fff;font-size:12px}
-  .sidebar,.topbar,.foot,.no-print,.alert,.menu-btn{display:none!important}
+  @page{size:A4;margin:0}
+  html{background:#fff}
+  body{background:#fff;font-size:12px;margin:0;padding:15mm;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+  .sidebar,.topbar,.foot,.no-print,.alert,.menu-btn,.scrim{display:none!important}
+  .shell{display:block;min-height:0;background:none!important}
+  .main{display:block}
   .content{padding:0}
+  button,.btn,.row-actions,form.inline{display:none!important}
+  a{color:inherit!important;text-decoration:none!important}
+  .doc{max-width:none!important}
+  .table-wrap{overflow:visible!important}
+  tr{page-break-inside:avoid;break-inside:avoid}
   .doc,.card{border:0;padding:0;border-radius:0}
   .doc th{background:#0E1B33!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   tfoot td{-webkit-print-color-adjust:exact;print-color-adjust:exact}
