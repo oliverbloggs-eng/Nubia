@@ -4,7 +4,7 @@ require_login();
 
 $period = valid_period(post('period') ?: get('period'));
 $dueDay = max(1, min(28, (int)(settings()['rent_due_day'] ?? 5)));
-$dueDate = $period . '-' . str_pad((string)$dueDay, 2, '0', STR_PAD_LEFT);
+$dueDate = due_date_for($period);
 
 /** Units that should be billed for a period: someone assigned, money due monthly. */
 function billable_units(string $period): array
@@ -29,6 +29,13 @@ if (is_post()) {
                 $total = (float)$u['monthly_amount'] + (float)$u['service_charge'];
                 q('INSERT IGNORE INTO invoices (invoice_no, unit_id, client_id, period, amount, service_charge, total, due_date, created_by) VALUES (?,?,?,?,?,?,?,?,?)',
                   [next_invoice_no($period), $u['id'], $u['client_id'], $period, $u['monthly_amount'], $u['service_charge'], $total, $dueDate, user()['id']]);
+                // Readings saved for this month whose invoice was deleted go back on the new one
+                $newId = (int)db()->lastInsertId();
+                if ($newId) {
+                    q('UPDATE meter_readings SET invoice_id=? WHERE unit_id=? AND client_id=? AND period=? AND invoice_id IS NULL AND amount <> 0',
+                      [$newId, $u['id'], $u['client_id'], $period . '-01']);
+                    invoice_recalc($newId);
+                }
                 $made++;
             }
             db()->commit();
@@ -43,7 +50,8 @@ if (is_post()) {
         $inv = one('SELECT * FROM invoices WHERE id=?', [(int)post('id')]);
         if ($inv) {
             $other = num(post('other_charges'));
-            q('UPDATE invoices SET other_charges=?, other_label=?, total=amount+service_charge+? WHERE id=?', [$other, nullable(post('other_label')), $other, $inv['id']]);
+            q('UPDATE invoices SET other_charges=?, other_label=? WHERE id=?', [$other, nullable(post('other_label')), $inv['id']]);
+            invoice_recalc((int)$inv['id']);
             log_action("Adjusted invoice {$inv['invoice_no']}: other charges $other");
             flash('Invoice ' . $inv['invoice_no'] . ' updated.');
         }
@@ -61,7 +69,7 @@ if (is_post()) {
 $units = billable_units($period);
 $pending = array_filter($units, fn($u) => !$u['invoice_id']);
 $pendingTotal = array_sum(array_map(fn($u) => $u['monthly_amount'] + $u['service_charge'], $pending));
-$invoices = all('SELECT i.*, u.unit_no, p.name property, c.name client, c.phone FROM invoices i JOIN units u ON u.id=i.unit_id JOIN properties p ON p.id=u.property_id JOIN clients c ON c.id=i.client_id WHERE i.period=? ORDER BY p.name, LENGTH(u.unit_no), u.unit_no', [$period]);
+$invoices = all('SELECT i.*, (SELECT COALESCE(SUM(m.amount),0) FROM meter_readings m WHERE m.invoice_id=i.id) utilities, u.unit_no, p.name property, c.name client, c.phone FROM invoices i JOIN units u ON u.id=i.unit_id JOIN properties p ON p.id=u.property_id JOIN clients c ON c.id=i.client_id WHERE i.period=? ORDER BY p.name, LENGTH(u.unit_no), u.unit_no', [$period]);
 $adjust = get('adjust') ? one('SELECT i.*, u.unit_no, c.name client FROM invoices i JOIN units u ON u.id=i.unit_id JOIN clients c ON c.id=i.client_id WHERE i.id=?', [(int)get('adjust')]) : null;
 $s = settings();
 
@@ -98,9 +106,9 @@ page_start('Monthly billing', 'billing');
     <?= csrf_field() ?><input type="hidden" name="action" value="adjust"><input type="hidden" name="id" value="<?= $adjust['id'] ?>"><input type="hidden" name="period" value="<?= e($period) ?>">
     <div class="form-grid">
       <div><label>Amount (KES)</label><input type="number" step="0.01" name="other_charges" value="<?= e($adjust['other_charges']) ?>"></div>
-      <div><label>What it is for</label><input name="other_label" value="<?= e($adjust['other_label']) ?>" placeholder="e.g. Water bill, late payment fee"></div>
+      <div><label>What it is for</label><input name="other_label" value="<?= e($adjust['other_label']) ?>" placeholder="e.g. Late payment fee"></div>
     </div>
-    <p class="help">Use a negative amount for a discount or credit.</p>
+    <p class="help">Use a negative amount for a discount or credit. Water and electricity are added from <a href="meter_readings.php">Meter readings</a>, not here.</p>
     <div class="form-actions"><a class="btn ghost" href="billing.php?period=<?= e($period) ?>">Cancel</a><button class="btn gold">Save</button></div>
   </form>
 </div>
@@ -117,7 +125,7 @@ page_start('Monthly billing', 'billing');
       <tr>
         <td><strong><?= e($i['invoice_no']) ?></strong><div class="small muted"><?= e($i['property']) ?> · <?= e($i['unit_no']) ?> · due <?= fdate($i['due_date']) ?></div></td>
         <td><?= e($i['client']) ?><div class="small muted"><?= e($i['phone']) ?></div></td>
-        <td class="num"><?= money($i['total']) ?><?= (float)$i['other_charges'] ? '<div class="small muted">incl. ' . e($i['other_label'] ?: 'other') . ' ' . money($i['other_charges']) . '</div>' : '' ?></td>
+        <td class="num"><?= money($i['total']) ?><?= (float)$i['other_charges'] ? '<div class="small muted">incl. ' . e($i['other_label'] ?: 'other') . ' ' . money($i['other_charges']) . '</div>' : '' ?><?= (float)$i['utilities'] ? '<div class="small muted">incl. water/electricity ' . money($i['utilities']) . '</div>' : '' ?></td>
         <td class="num <?= $bal > 0 ? 'pos' : ($bal < 0 ? 'neg' : '') ?>"><?= money($bal) ?></td>
         <td><div class="row-actions">
           <a class="btn sm ghost" href="invoice.php?id=<?= $i['id'] ?>" target="_blank"><?= icon('print') ?>Invoice</a>

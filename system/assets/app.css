@@ -229,3 +229,12 @@ fieldset.plain{border:0;padding:0;margin:0;min-width:0}
   tfoot td{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   tr:hover td{background:none}
 }
+
+/* ---------- meter readings ---------- */
+.readings input.mr-num{width:120px;text-align:right;padding:7px 9px}
+.readings input[readonly]{background:var(--sand);color:var(--muted)}
+.readings label.check{display:flex;align-items:center;gap:6px;font-size:13px;margin:0;white-space:nowrap}
+.readings label.check input{width:auto}
+.readings tr.row-error td{background:var(--red-soft)}
+.readings tr.row-error [data-used]{color:var(--red);font-weight:600}
+

@@ -3,9 +3,11 @@ require __DIR__ . '/inc/bootstrap.php';
 require_admin();
 
 if (is_post()) {
-    q('UPDATE settings SET company_name=?, address=?, phone=?, email=?, website=?, default_fee_pct=?, rent_due_day=?, payment_instructions=? WHERE id=1', [
+    $elec = post('default_electricity_price');
+    q('UPDATE settings SET company_name=?, address=?, phone=?, email=?, website=?, default_fee_pct=?, rent_due_day=?, payment_instructions=?, default_water_price=?, default_electricity_price=? WHERE id=1', [
         post('company_name'), post('address'), post('phone'), post('email'), post('website'),
         num(post('default_fee_pct')), max(1, min(28, (int)post('rent_due_day'))), post('payment_instructions'),
+        max(0, num(post('default_water_price'))), $elec === '' ? null : max(0, num($elec)),
     ]);
     log_action('Updated company settings');
     flash('Settings saved.');
@@ -28,6 +30,8 @@ page_start('Company settings', 'settings');
       <div><label>Email</label><input type="email" name="email" value="<?= e($s['email']) ?>"></div>
       <div><label>Default management fee (%)</label><input type="number" step="0.01" min="0" max="100" name="default_fee_pct" value="<?= e($s['default_fee_pct']) ?>"><div class="help">Used for new properties. Each property can have its own rate.</div></div>
       <div><label>Rent due on day</label><input type="number" min="1" max="28" name="rent_due_day" value="<?= e($s['rent_due_day']) ?>"><div class="help">Day of the month printed as the due date on invoices.</div></div>
+      <div><label>Default water price per unit (KES)</label><input type="number" step="0.01" min="0" name="default_water_price" value="<?= e($s['default_water_price'] ?? '150.00') ?>"><div class="help">Each property can have its own price.</div></div>
+      <div><label>Default electricity price per unit (KES) <span class="opt">(optional)</span></label><input type="number" step="0.01" min="0" name="default_electricity_price" value="<?= e($s['default_electricity_price'] ?? '') ?>"><div class="help">Leave blank if electricity is not billed by the company.</div></div>
       <div class="full"><label>Payment instructions</label><input name="payment_instructions" value="<?= e($s['payment_instructions']) ?>" placeholder="e.g. Pay via M-Pesa Paybill 123456, account = your unit number."><div class="help">Shown on invoices and added to WhatsApp reminders.</div></div>
     </div>
     <div class="form-actions"><button class="btn gold">Save settings</button></div>

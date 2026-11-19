@@ -17,6 +17,7 @@ if ($receipt) {
 if (!$d) { page_start($title); echo '<div class="card empty">Not found.</div>'; page_end(); exit; }
 
 $bal = balance((int)$d['unit_id'], (int)$d['client_id']);
+$readings = $receipt ? [] : invoice_readings((int)$d['id']);
 page_start($title, $receipt ? 'payments' : 'billing');
 ?>
 <div class="actions no-print" style="margin-bottom:16px"><button class="btn gold" onclick="window.print()"><?= icon('print') ?>Print or save as PDF</button><a class="btn ghost" href="<?= $receipt ? 'payments.php' : 'billing.php?period=' . e($d['period']) ?>">Back</a></div>
@@ -39,8 +40,9 @@ page_start($title, $receipt ? 'payments' : 'billing');
       <tr><td>Payment received<?= $d['notes'] ? ' · ' . e($d['notes']) : '' ?></td><td class="num"><?= money($d['amount']) ?></td></tr>
       <tfoot><tr><td>Total received</td><td class="num"><?= money($d['amount']) ?></td></tr></tfoot>
     <?php else: ?>
-      <tr><td><?= (float)$d['amount'] ? 'Rent / instalment for ' . e(period_label($d['period'])) : '' ?></td><td class="num"><?= money($d['amount']) ?></td></tr>
+      <?php if ((float)$d['amount']): ?><tr><td>Rent / instalment for <?= e(period_label($d['period'])) ?></td><td class="num"><?= money($d['amount']) ?></td></tr><?php endif; ?>
       <?php if ((float)$d['service_charge']): ?><tr><td>Service charge</td><td class="num"><?= money($d['service_charge']) ?></td></tr><?php endif; ?>
+      <?php foreach ($readings as $r): ?><tr><td><?= e(reading_line($r)) ?></td><td class="num"><?= money($r['amount']) ?></td></tr><?php endforeach; ?>
       <?php if ((float)$d['other_charges']): ?><tr><td><?= e($d['other_label'] ?: 'Other charges') ?></td><td class="num"><?= money($d['other_charges']) ?></td></tr><?php endif; ?>
       <tfoot><tr><td>Invoice total</td><td class="num"><?= money($d['total']) ?></td></tr></tfoot>
     <?php endif; ?>

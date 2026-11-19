@@ -10,16 +10,19 @@ if (is_post()) {
         $id = (int)post('id');
         $data = [
             post('name'), post('location'), in_array(post('type'), $types, true) ? post('type') : 'Residential',
-            nullable(post('owner_id')), num(post('fee_pct', settings()['default_fee_pct'] ?? 8)), post('notes'),
+            nullable(post('owner_id')), num(post('fee_pct', settings()['default_fee_pct'] ?? 8)),
+            post('water_price') === '' ? null : max(0, num(post('water_price'))),
+            post('electricity_price') === '' ? null : max(0, num(post('electricity_price'))),
+            post('notes'),
         ];
         if ($data[0] === '' || $data[1] === '') {
             flash('Name and location are required.', 'error');
         } elseif ($id) {
-            q('UPDATE properties SET name=?, location=?, type=?, owner_id=?, fee_pct=?, notes=? WHERE id=?', [...$data, $id]);
+            q('UPDATE properties SET name=?, location=?, type=?, owner_id=?, fee_pct=?, water_price=?, electricity_price=?, notes=? WHERE id=?', [...$data, $id]);
             log_action("Updated property {$data[0]}");
             flash('Property updated.');
         } else {
-            q('INSERT INTO properties (name, location, type, owner_id, fee_pct, notes) VALUES (?,?,?,?,?,?)', $data);
+            q('INSERT INTO properties (name, location, type, owner_id, fee_pct, water_price, electricity_price, notes) VALUES (?,?,?,?,?,?,?,?)', $data);
             log_action("Added property {$data[0]}");
             flash('Property added. Now add its units.');
             redirect('units.php?property=' . db()->lastInsertId() . '#new');
@@ -65,6 +68,9 @@ section_head('Building portfolio', count($rows) . ' propert' . (count($rows) ===
           <div class="help">Owners are added on the <a href="clients.php?type=Owner#new">Clients</a> page with type “Owner”.</div>
         </div>
         <div><label>Management fee (% of rent collected)</label><input name="fee_pct" type="number" step="0.01" min="0" max="100" value="<?= e($edit['fee_pct'] ?? (settings()['default_fee_pct'] ?? 8)) ?>"></div>
+        <?php $s = settings(); ?>
+        <div><label>Water price per unit (KES) <span class="opt">(optional)</span></label><input name="water_price" type="number" step="0.01" min="0" value="<?= e($edit['water_price'] ?? '') ?>" placeholder="<?= e($s['default_water_price'] ?? '') ?>"><div class="help">Leave blank to use the company price<?= isset($s['default_water_price']) ? ' (' . e(money($s['default_water_price'])) . ')' : '' ?>.</div></div>
+        <div><label>Electricity price per unit (KES) <span class="opt">(optional)</span></label><input name="electricity_price" type="number" step="0.01" min="0" value="<?= e($edit['electricity_price'] ?? '') ?>" placeholder="<?= e($s['default_electricity_price'] ?? '') ?>"><div class="help">Leave blank to use the company price<?= !empty($s['default_electricity_price']) ? ' (' . e(money($s['default_electricity_price'])) . ')' : '' ?>.</div></div>
         <div class="full"><label>Notes <span class="opt">(optional)</span></label><textarea name="notes"><?= e($edit['notes'] ?? '') ?></textarea></div>
       </div>
       <div class="form-actions"><?php if ($edit): ?><a class="btn ghost" href="properties.php">Cancel</a><?php endif; ?><button class="btn gold"><?= $edit ? 'Save changes' : 'Add property' ?></button></div>
@@ -86,6 +92,7 @@ section_head('Building portfolio', count($rows) . ' propert' . (count($rows) ===
         <td><div class="row-actions">
           <a class="btn sm ghost" href="units.php?property=<?= $r['id'] ?>">Units</a>
           <a class="btn sm ghost" href="owner_statement.php?property=<?= $r['id'] ?>">Owner statement</a>
+          <a class="btn sm ghost" href="meter_readings.php?property=<?= $r['id'] ?>">Meter readings</a>
           <a class="btn sm ghost" href="properties.php?edit=<?= $r['id'] ?>#new">Edit</a>
           <?php if (is_admin()): ?><form method="post" class="inline" data-confirm="Delete <?= e($r['name']) ?>?"><?= csrf_field() ?><input type="hidden" name="action" value="delete"><input type="hidden" name="id" value="<?= $r['id'] ?>"><button class="btn sm danger">Delete</button></form><?php endif; ?>
         </div></td>

@@ -172,6 +172,71 @@ function next_invoice_no(string $period): string
     return $prefix . str_pad((string)$n, 4, '0', STR_PAD_LEFT);
 }
 
+/** Due date printed on invoices for a period (day set in Company settings). */
+function due_date_for(string $period): string
+{
+    $day = max(1, min(28, (int)(settings()['rent_due_day'] ?? 5)));
+    return $period . '-' . str_pad((string)$day, 2, '0', STR_PAD_LEFT);
+}
+
+/**
+ * The invoice for a unit and month, creating it if billing has not run yet.
+ * A new invoice carries the month's rent and service charge, exactly as the
+ * billing run would, so the run later skips it and nothing is billed twice.
+ * Returns null when the month's invoice belongs to a different client.
+ */
+function invoice_for_period(array $unit, int $clientId, string $period): ?array
+{
+    $inv = one('SELECT * FROM invoices WHERE unit_id=? AND period=?', [$unit['id'], $period]);
+    if ($inv) return (int)$inv['client_id'] === $clientId ? $inv : null;
+    $amount = (float)$unit['monthly_amount']; $sc = (float)$unit['service_charge'];
+    q('INSERT INTO invoices (invoice_no, unit_id, client_id, period, amount, service_charge, total, due_date, created_by) VALUES (?,?,?,?,?,?,?,?,?)',
+      [next_invoice_no($period), $unit['id'], $clientId, $period, $amount, $sc, $amount + $sc, due_date_for($period), user()['id'] ?? null]);
+    $inv = one('SELECT * FROM invoices WHERE id=?', [db()->lastInsertId()]);
+    log_action("Created invoice {$inv['invoice_no']} for meter readings, " . period_label($period));
+    return $inv;
+}
+
+/** Recalculate an invoice total: rent + service charge + other charges + meter reading lines. */
+function invoice_recalc(int $invoiceId): void
+{
+    q('UPDATE invoices i SET total = i.amount + i.service_charge + i.other_charges
+         + COALESCE((SELECT SUM(m.amount) FROM meter_readings m WHERE m.invoice_id = i.id), 0)
+       WHERE i.id = ?', [$invoiceId]);
+}
+
+/** Meter reading lines on an invoice. */
+function invoice_readings(int $invoiceId): array
+{
+    return all('SELECT * FROM meter_readings WHERE invoice_id=? ORDER BY utility DESC', [$invoiceId]);
+}
+
+const UTILITIES = ['water' => 'Water', 'electricity' => 'Electricity'];
+
+/** Price per unit for a property: its own price, or the company default. Null when neither is set. */
+function utility_price(array $property, string $utility): ?float
+{
+    $own = $property[$utility . '_price'] ?? null;
+    if ($own !== null && $own !== '') return (float)$own;
+    $def = settings()['default_' . $utility . '_price'] ?? null;
+    return ($def !== null && $def !== '') ? (float)$def : null;
+}
+
+/** A meter figure without needless decimals: 1245 or 1245.5 */
+function qty($n): string
+{
+    $s = number_format((float)$n, 2);
+    return str_ends_with($s, '.00') ? substr($s, 0, -3) : rtrim($s, '0');
+}
+
+/** Invoice line text, e.g. "Water: 1,245 → 1,262 = 17 units × KES 150.00" */
+function reading_line(array $r): string
+{
+    return UTILITIES[$r['utility']] . ': ' . qty($r['previous_reading']) . ' → ' . qty($r['current_reading'])
+        . ' = ' . qty($r['units_used']) . ' units × ' . money($r['price_per_unit'])
+        . ($r['meter_replaced'] ? ' (meter replaced)' : '');
+}
+
 /** Kenyan phone number in international form for WhatsApp links. */
 function wa_number(?string $phone): string
 {

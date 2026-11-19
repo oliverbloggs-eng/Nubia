@@ -67,3 +67,41 @@ document.addEventListener('submit', function (ev) {
     next();
   });
 })();
+
+// Meter readings: units used, amount and totals as you type
+(function () {
+  var form = document.getElementById('readingsForm');
+  if (!form) return;
+  var priceIn = document.getElementById('mrPrice');
+  function kes(n) { return n.toLocaleString('en-KE', {minimumFractionDigits: 2, maximumFractionDigits: 2}); }
+  function qty(n) { return n.toLocaleString('en-KE', {maximumFractionDigits: 2}); }
+  function update() {
+    var price = parseFloat(priceIn.value), units = 0, total = 0;
+    form.querySelectorAll('[data-row]').forEach(function (tr) {
+      var prevIn = tr.querySelector('[data-prev]'), curIn = tr.querySelector('[data-cur]');
+      var prev = parseFloat(prevIn.value), cur = parseFloat(curIn.value);
+      var used = tr.querySelector('[data-used]'), pr = tr.querySelector('[data-price]'), amt = tr.querySelector('[data-amount]');
+      pr.textContent = isNaN(price) ? '—' : kes(price);
+      tr.classList.remove('row-error');
+      if (curIn.value === '' || isNaN(cur) || isNaN(prev)) { used.textContent = '—'; amt.textContent = '—'; return; }
+      var u = Math.round((cur - prev) * 100) / 100;
+      if (u < 0) { tr.classList.add('row-error'); used.textContent = 'Lower than previous'; amt.textContent = '—'; return; }
+      var a = isNaN(price) ? 0 : Math.round(u * price * 100) / 100;
+      used.textContent = qty(u); amt.textContent = isNaN(price) ? '—' : kes(a);
+      units += u; total += a;
+    });
+    document.getElementById('mrUnits').textContent = qty(units);
+    document.getElementById('mrTotal').textContent = 'KES ' + kes(total);
+  }
+  form.addEventListener('input', update);
+  form.addEventListener('change', function (ev) {
+    var box = ev.target;
+    if (!box.hasAttribute('data-replaced')) return;
+    var prevIn = box.closest('tr').querySelector('[data-prev]'), locked = prevIn.getAttribute('data-locked');
+    if (locked === '') return;                       // no earlier reading: always typed by hand
+    if (box.checked) { prevIn.readOnly = false; prevIn.value = ''; prevIn.focus(); }
+    else { prevIn.readOnly = true; prevIn.value = locked; }
+    update();
+  });
+  update();
+})();

@@ -24,6 +24,7 @@ function icon(string $name): string
         'whatsapp'  => '<path d="M3 21l1.6-4.8A8.5 8.5 0 1 1 8 19.5z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 1c-1-.5-2-1.5-2.5-2.5l1-1-1-2z"/>',
         'arrow'     => '<path d="M5 12h14M13 6l6 6-6 6"/>',
         'tag'       => '<path d="M3 3h8l10 10-8 8L3 11zM7.5 7.5h.01"/>',
+        'meter'     => '<circle cx="12" cy="13" r="8"/><path d="M12 13l3.5-3.5M8 5.8V3h8v2.8"/>',
         'star'      => '<path d="M12 3l2.8 5.8 6.2.9-4.5 4.4 1.1 6.3-5.6-3-5.6 3 1.1-6.3L3 9.7l6.2-.9z"/>',
     ][$name] ?? '';
     return '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' . $p . '</svg>';
@@ -46,6 +47,7 @@ function page_start(string $title, string $active = ''): void
             ['arrears.php', 'arrears', 'Arrears', 'alert'],
             ['statement.php', 'statement', 'Master statement', 'report'],
             ['owner_statement.php', 'owner', 'Owner statements', 'owner'],
+            ['meter_readings.php', 'meters', 'Meter readings', 'meter'],
         ],
         'Operations' => [
             ['maintenance.php', 'maintenance', 'Maintenance', 'wrench'],
@@ -74,7 +76,7 @@ function page_start(string $title, string $active = ''): void
 <meta name="robots" content="noindex, nofollow">
 <title><?= e($title) ?> · Nubia KC Estates</title>
 <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
-<link rel="stylesheet" href="assets/app.css?v=2">
+<link rel="stylesheet" href="assets/app.css?v=3">
 </head>
 <body>
 <div class="shell">
@@ -117,7 +119,7 @@ function page_end(): void
     <footer class="foot">© <?= date('Y') ?> Nubia KC Estates Ltd · Management System</footer>
   </main>
 </div>
-<script src="assets/app.js?v=2"></script>
+<script src="assets/app.js?v=3"></script>
 </body>
 </html>
 <?php
