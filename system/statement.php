@@ -15,18 +15,21 @@ foreach (accounts($propertyFilter ?: null) as $a) {
     $paid = (float)val('SELECT COALESCE(SUM(amount),0) FROM payments WHERE unit_id=? AND client_id=? AND paid_on BETWEEN ? AND ?', [$u, $c, $start, $end]);
     $cf = round($bf + $billed - $paid, 2);
     if (abs($bf) < 0.005 && $billed == 0 && $paid == 0) continue;
-    $rows[] = array_merge($a, compact('bf', 'billed', 'paid', 'cf'));
+    // Water and electricity are Nubia KC's money; payments are split rent first
+    $billed_util = utilities_billed($u, $period, $c);
+    $paid_util = $paid ? paid_split($u, $c, $start, $end)['utilities'] : 0.0;
+    $rows[] = array_merge($a, compact('bf', 'billed', 'paid', 'cf', 'billed_util', 'paid_util'));
 }
-$t = ['bf' => 0, 'billed' => 0, 'paid' => 0, 'cf' => 0];
+$t = ['bf' => 0, 'billed' => 0, 'paid' => 0, 'cf' => 0, 'billed_util' => 0, 'paid_util' => 0];
 foreach ($rows as $r) foreach ($t as $k => $_) $t[$k] += $r[$k];
 
 if (get('export') === 'csv') {
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment; filename="statement-' . $period . '.csv"');
     $f = fopen('php://output', 'w');
-    fputcsv($f, ['Property', 'Unit', 'Client', 'Phone', 'Brought forward', 'Billed', 'Paid', 'Balance']);
-    foreach ($rows as $r) fputcsv($f, [$r['property'], $r['unit_no'], $r['client'], $r['phone'], $r['bf'], $r['billed'], $r['paid'], $r['cf']]);
-    fputcsv($f, ['TOTAL', '', '', '', $t['bf'], $t['billed'], $t['paid'], $t['cf']]);
+    fputcsv($f, ['Property', 'Unit', 'Client', 'Phone', 'Brought forward', 'Billed', 'Paid', 'Balance', 'Utilities billed (in Billed)', 'Utilities paid (in Paid)', 'Rent paid (in Paid)']);
+    foreach ($rows as $r) fputcsv($f, [$r['property'], $r['unit_no'], $r['client'], $r['phone'], $r['bf'], $r['billed'], $r['paid'], $r['cf'], $r['billed_util'], $r['paid_util'], round($r['paid'] - $r['paid_util'], 2)]);
+    fputcsv($f, ['TOTAL', '', '', '', $t['bf'], $t['billed'], $t['paid'], $t['cf'], $t['billed_util'], $t['paid_util'], round($t['paid'] - $t['paid_util'], 2)]);
     exit;
 }
 
@@ -55,12 +58,18 @@ page_start('Master statement', 'statement');
     <tr><th>Property / unit</th><th>Client</th><th class="num">Brought forward</th><th class="num">Billed</th><th class="num">Paid</th><th class="num">Balance</th></tr>
     <?php foreach ($rows as $r): ?>
       <tr><td><strong><?= e($r['property']) ?></strong> · <?= e($r['unit_no']) ?></td><td><?= e($r['client']) ?><div class="small muted"><?= e($r['phone']) ?></div></td>
-        <td class="num"><?= money($r['bf'], false) ?></td><td class="num"><?= money($r['billed'], false) ?></td><td class="num"><?= money($r['paid'], false) ?></td>
+        <td class="num"><?= money($r['bf'], false) ?></td><td class="num"><?= money($r['billed'], false) ?><?= $r['billed_util'] ? '<div class="small muted">utilities ' . money($r['billed_util'], false) . '</div>' : '' ?></td><td class="num"><?= money($r['paid'], false) ?><?= $r['paid_util'] ? '<div class="small muted">utilities ' . money($r['paid_util'], false) . '</div>' : '' ?></td>
         <td class="num <?= $r['cf'] > 0 ? 'pos' : ($r['cf'] < 0 ? 'neg' : '') ?>"><?= money($r['cf'], false) ?></td></tr>
     <?php endforeach; ?>
     <tfoot><tr><td colspan="2">Totals (KES)</td><td class="num"><?= money($t['bf'], false) ?></td><td class="num"><?= money($t['billed'], false) ?></td><td class="num"><?= money($t['paid'], false) ?></td><td class="num"><?= money($t['cf'], false) ?></td></tr></tfoot>
   </table></div>
-  <p class="small muted" style="margin-top:14px">Balance = brought forward + billed − paid. A negative balance means the client is in credit. Generated <?= date('d M Y, H:i') ?>.</p>
+  <table style="margin-top:24px;max-width:520px;margin-left:auto">
+    <tr><th>Collected in <?= e(period_label($period)) ?></th><th class="num">Billed</th><th class="num">Collected</th></tr>
+    <tr><td>Rent, service charge and other charges (owners)</td><td class="num"><?= money($t['billed'] - $t['billed_util'], false) ?></td><td class="num"><?= money($t['paid'] - $t['paid_util'], false) ?></td></tr>
+    <tr><td>Water and electricity (<?= e($s['company_name']) ?>)</td><td class="num"><?= money($t['billed_util'], false) ?></td><td class="num"><?= money($t['paid_util'], false) ?></td></tr>
+    <tfoot><tr><td>Total</td><td class="num"><?= money($t['billed'], false) ?></td><td class="num"><?= money($t['paid']) ?></td></tr></tfoot>
+  </table>
+  <p class="small muted" style="margin-top:14px">Payments count towards rent first, then water and electricity. Balance = brought forward + billed − paid. A negative balance means the client is in credit. Generated <?= date('d M Y, H:i') ?>.</p>
   <?php endif; ?>
 </div>
 <?php page_end();

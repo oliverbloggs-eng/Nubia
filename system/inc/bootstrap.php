@@ -252,6 +252,62 @@ function balance_after_payment(array $payment): float
     return round($inv - $pay, 2);
 }
 
+/**
+ * Splits every payment on an account into rent and utilities (water and electricity).
+ * Utility money belongs to Nubia KC; rent money goes to the owner. Rent first: each
+ * payment clears unpaid rent, service charge and other charges billed up to its month,
+ * then unpaid water and electricity. Anything left over is rent paid in advance.
+ * Returns [payment_id => ['rent' => x, 'utilities' => y]].
+ */
+function payment_split(int $unitId, int $clientId): array
+{
+    static $cache = [];
+    $key = "$unitId-$clientId";
+    if (isset($cache[$key])) return $cache[$key];
+    $invoices = all('SELECT i.period, i.total, COALESCE((SELECT SUM(m.amount) FROM meter_readings m WHERE m.invoice_id=i.id),0) AS util
+                     FROM invoices i WHERE i.unit_id=? AND i.client_id=?', [$unitId, $clientId]);
+    $payments = all('SELECT id, amount, paid_on FROM payments WHERE unit_id=? AND client_id=? ORDER BY paid_on, id', [$unitId, $clientId]);
+    $rentPaid = 0.0; $utilPaid = 0.0; $out = [];
+    foreach ($payments as $p) {
+        $month = substr($p['paid_on'], 0, 7);
+        $rentDue = 0.0; $utilDue = 0.0;
+        foreach ($invoices as $i) {
+            if ($i['period'] > $month) continue;
+            $utilDue += (float)$i['util'];
+            $rentDue += (float)$i['total'] - (float)$i['util'];
+        }
+        $x = (float)$p['amount'];
+        $rent = min($x, max(0.0, $rentDue - $rentPaid));
+        $util = min($x - $rent, max(0.0, $utilDue - $utilPaid));
+        $rent = round($x - $util, 2);                    // leftover counts as rent in advance
+        $util = round($util, 2);
+        $rentPaid += $rent; $utilPaid += $util;
+        $out[(int)$p['id']] = ['rent' => $rent, 'utilities' => $util];
+    }
+    return $cache[$key] = $out;
+}
+
+/** Rent and utility parts of the payments on an account between two dates (inclusive). */
+function paid_split(int $unitId, int $clientId, string $from, string $to): array
+{
+    $split = payment_split($unitId, $clientId);
+    $sum = ['rent' => 0.0, 'utilities' => 0.0];
+    foreach (all('SELECT id FROM payments WHERE unit_id=? AND client_id=? AND paid_on BETWEEN ? AND ?', [$unitId, $clientId, $from, $to]) as $p) {
+        $sum['rent'] += $split[(int)$p['id']]['rent'] ?? 0;
+        $sum['utilities'] += $split[(int)$p['id']]['utilities'] ?? 0;
+    }
+    return ['rent' => round($sum['rent'], 2), 'utilities' => round($sum['utilities'], 2)];
+}
+
+/** Water and electricity billed on a unit's invoices for a period (optionally one client). */
+function utilities_billed(int $unitId, string $period, ?int $clientId = null): float
+{
+    $sql = 'SELECT COALESCE(SUM(m.amount),0) FROM meter_readings m JOIN invoices i ON i.id=m.invoice_id WHERE i.unit_id=? AND i.period=?';
+    $params = [$unitId, $period];
+    if ($clientId) { $sql .= ' AND i.client_id=?'; $params[] = $clientId; }
+    return round((float)val($sql, $params), 2);
+}
+
 /** Kenyan phone number in international form for WhatsApp links. */
 function wa_number(?string $phone): string
 {

@@ -21,9 +21,15 @@ $pid = (int)$prop['id'];
 $units = all('SELECT u.*, c.name client FROM units u LEFT JOIN clients c ON c.id=u.client_id WHERE u.property_id=? ORDER BY LENGTH(u.unit_no), u.unit_no', [$pid]);
 $rows = [];
 foreach ($units as $u) {
-    $billed = (float)val('SELECT COALESCE(SUM(total),0) FROM invoices WHERE unit_id=? AND period=?', [$u['id'], $period]);
-    $collected = (float)val('SELECT COALESCE(SUM(amount),0) FROM payments WHERE unit_id=? AND paid_on BETWEEN ? AND ?', [$u['id'], $start, $end]);
-    $rows[] = $u + compact('billed', 'collected');
+    // Water and electricity belong to Nubia KC (it pays the suppliers), so only rent,
+    // service charge and other charges count here. Payments are split rent first.
+    $billed = round((float)val('SELECT COALESCE(SUM(total),0) FROM invoices WHERE unit_id=? AND period=?', [$u['id'], $period]) - utilities_billed((int)$u['id'], $period), 2);
+    $collected = 0.0; $utilCollected = 0.0;
+    foreach (all('SELECT DISTINCT client_id FROM payments WHERE unit_id=? AND paid_on BETWEEN ? AND ?', [$u['id'], $start, $end]) as $pc) {
+        $part = paid_split((int)$u['id'], (int)$pc['client_id'], $start, $end);
+        $collected += $part['rent']; $utilCollected += $part['utilities'];
+    }
+    $rows[] = $u + compact('billed', 'collected', 'utilCollected');
 }
 $totBilled = array_sum(array_column($rows, 'billed'));
 $totCollected = array_sum(array_column($rows, 'collected'));
@@ -54,7 +60,7 @@ $feeLabel = rtrim(rtrim(number_format($feePct, 2), '0'), '.');
   </div>
 
   <div class="table-wrap"><table>
-    <tr><th>Unit</th><th>Occupant</th><th>Status</th><th class="num">Billed</th><th class="num">Collected</th></tr>
+    <tr><th>Unit</th><th>Occupant</th><th>Status</th><th class="num">Rent billed</th><th class="num">Rent collected</th></tr>
     <?php foreach ($rows as $r): ?>
       <tr><td><?= e($r['unit_no']) ?></td><td><?= e($r['client'] ?? '—') ?></td><td><?= e($r['status']) ?></td><td class="num"><?= money($r['billed'], false) ?></td><td class="num"><?= money($r['collected'], false) ?></td></tr>
     <?php endforeach; ?>
@@ -75,6 +81,6 @@ $feeLabel = rtrim(rtrim(number_format($feePct, 2), '0'), '.');
     <tr><td>Less repairs and maintenance</td><td class="num">− <?= money($repairTotal) ?></td></tr>
     <tfoot><tr><td>Net payable to owner</td><td class="num"><?= money($net) ?></td></tr></tfoot>
   </table>
-  <p class="small muted" style="margin-top:16px">Collected means money received during <?= e(period_label($period)) ?>, including any arrears paid. Generated <?= date('d M Y, H:i') ?>.</p>
+  <p class="small muted" style="margin-top:16px">Collected means rent received during <?= e(period_label($period)) ?>, including any arrears paid. Water and electricity are billed and paid to <?= e($s['company_name']) ?>, which pays the suppliers, so they are not included and no fee is taken on them. Generated <?= date('d M Y, H:i') ?>.</p>
 </div>
 <?php page_end();
