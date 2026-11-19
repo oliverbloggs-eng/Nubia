@@ -48,6 +48,8 @@ function page_start(string $title, string $active = ''): void
             ['statement.php', 'statement', 'Master statement', 'report'],
             ['owner_statement.php', 'owner', 'Owner statements', 'owner'],
             ['meter_readings.php', 'meters', 'Meter readings', 'meter'],
+            ['utility_statement.php', 'utility_statement', 'Utility statement', 'report'],
+            ['tenant_statement.php', 'tenant_statement', 'Tenant statement', 'invoice'],
         ],
         'Operations' => [
             ['maintenance.php', 'maintenance', 'Maintenance', 'wrench'],

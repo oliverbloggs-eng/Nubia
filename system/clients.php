@@ -49,6 +49,12 @@ if ($view = (int)get('view')) {
     $owned = all('SELECT p.*, (SELECT COUNT(*) FROM units WHERE property_id=p.id) units FROM properties p WHERE owner_id=?', [$view]);
     $accts = array_filter(accounts(), fn($a) => (int)$a['client_id'] === $view);
     $pays = all('SELECT y.*, u.unit_no, p.name property FROM payments y JOIN units u ON u.id=y.unit_id JOIN properties p ON p.id=u.property_id WHERE y.client_id=? ORDER BY paid_on DESC LIMIT 20', [$view]);
+    // Last 12 months of meter readings, per utility
+    $since = date('Y-m-01', strtotime('first day of -11 month'));
+    $readings = [];
+    foreach (all('SELECT m.*, u.unit_no, p.name property FROM meter_readings m JOIN units u ON u.id=m.unit_id JOIN properties p ON p.id=u.property_id WHERE m.client_id=? AND m.period >= ? ORDER BY m.period DESC, p.name, u.unit_no', [$view, $since]) as $r) {
+        $readings[$r['utility']][] = $r;
+    }
 
     section_head($c['name'], badge($c['type']) . ' ' . badge($c['status']),
         '<a class="btn ghost" href="clients.php">All clients</a><a class="btn gold" href="clients.php?edit=' . $c['id'] . '#new">Edit</a>');
@@ -79,10 +85,16 @@ if ($view = (int)get('view')) {
       <tr><th>Unit</th><th class="num">Invoiced</th><th class="num">Paid</th><th class="num">Balance</th><th></th></tr>
       <?php foreach ($accts as $a): $b = $a['invoiced'] - $a['paid']; ?>
         <tr><td><?= e($a['property']) ?> · <?= e($a['unit_no']) ?><?= $a['is_current'] ? '' : ' <span class="small muted">(moved out)</span>' ?></td><td class="num"><?= money($a['invoiced']) ?></td><td class="num"><?= money($a['paid']) ?></td><td class="num <?= $b > 0 ? 'pos' : ($b < 0 ? 'neg' : '') ?>"><?= money($b) ?></td>
-        <td><div class="row-actions"><a class="btn sm ghost" href="ledger.php?unit=<?= $a['unit_id'] ?>&client=<?= $a['client_id'] ?>">Ledger</a><a class="btn sm gold" href="payments.php?account=<?= $a['unit_id'] ?>-<?= $a['client_id'] ?>#new">Record payment</a></div></td></tr>
+        <td><div class="row-actions"><a class="btn sm ghost" href="ledger.php?unit=<?= $a['unit_id'] ?>&client=<?= $a['client_id'] ?>">Ledger</a><a class="btn sm ghost" href="tenant_statement.php?account=<?= $a['unit_id'] ?>-<?= $a['client_id'] ?>">Statement</a><a class="btn sm gold" href="payments.php?account=<?= $a['unit_id'] ?>-<?= $a['client_id'] ?>#new">Record payment</a></div></td></tr>
       <?php endforeach; ?>
     </table></div></div>
     <?php endif; ?>
+    <?php foreach (UTILITIES as $uk => $ul): if (empty($readings[$uk])) continue; ?>
+    <div class="card flush"><div style="padding:20px 22px 6px"><h3><?= e($ul) ?> history · last 12 months</h3></div><div class="table-wrap"><table>
+      <tr><th>Month</th><th>Unit</th><th class="num">Previous</th><th class="num">Current</th><th class="num">Units</th><th class="num">Price</th><th class="num">Amount</th></tr>
+      <?php foreach ($readings[$uk] as $r): ?><tr><td class="nowrap"><?= e(period_label(substr($r['period'], 0, 7))) ?></td><td><?= e($r['property']) ?> · <?= e($r['unit_no']) ?></td><td class="num"><?= e(qty($r['previous_reading'])) ?><?= $r['meter_replaced'] ? '<div class="small muted">new meter</div>' : '' ?></td><td class="num"><?= e(qty($r['current_reading'])) ?></td><td class="num"><?= e(qty($r['units_used'])) ?></td><td class="num"><?= money($r['price_per_unit'], false) ?></td><td class="num"><?= money($r['amount']) ?></td></tr><?php endforeach; ?>
+    </table></div></div>
+    <?php endforeach; ?>
     <?php if ($pays): ?>
     <div class="card flush"><div style="padding:20px 22px 6px"><h3>Recent payments</h3></div><div class="table-wrap"><table>
       <tr><th>Date</th><th>Unit</th><th>Method</th><th>Reference</th><th class="num">Amount</th></tr>
