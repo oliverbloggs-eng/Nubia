@@ -28,7 +28,9 @@ CREATE TABLE IF NOT EXISTS settings (
   website VARCHAR(160) NOT NULL,
   default_fee_pct DECIMAL(5,2) NOT NULL DEFAULT 8.00,
   rent_due_day TINYINT UNSIGNED NOT NULL DEFAULT 5,
-  payment_instructions VARCHAR(255) NOT NULL DEFAULT ''
+  payment_instructions VARCHAR(255) NOT NULL DEFAULT '',
+  default_water_price DECIMAL(10,2) NOT NULL DEFAULT 150.00,     -- KES per unit
+  default_electricity_price DECIMAL(10,2) NULL DEFAULT NULL      -- KES per unit
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT IGNORE INTO settings (id, company_name, address, phone, email, website, default_fee_pct, rent_due_day, payment_instructions)
@@ -61,6 +63,8 @@ CREATE TABLE IF NOT EXISTS properties (
   type ENUM('Residential','Commercial','Mixed use','Land') NOT NULL DEFAULT 'Residential',
   owner_id INT UNSIGNED NULL,
   fee_pct DECIMAL(5,2) NOT NULL DEFAULT 8.00,
+  water_price DECIMAL(10,2) NULL DEFAULT NULL,        -- KES per unit; NULL = company default
+  electricity_price DECIMAL(10,2) NULL DEFAULT NULL,  -- KES per unit; NULL = company default
   notes TEXT NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_prop_owner FOREIGN KEY (owner_id) REFERENCES clients(id) ON DELETE SET NULL
@@ -106,6 +110,34 @@ CREATE TABLE IF NOT EXISTS invoices (
   KEY idx_period (period),
   CONSTRAINT fk_inv_unit FOREIGN KEY (unit_id) REFERENCES units(id) ON DELETE CASCADE,
   CONSTRAINT fk_inv_client FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Metered water and electricity. One reading per unit, per utility, per month.
+-- The price used is saved on the reading so old bills never change.
+-- Each reading is one line on that month's invoice (invoice_id).
+CREATE TABLE IF NOT EXISTS meter_readings (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  unit_id INT UNSIGNED NOT NULL,
+  client_id INT UNSIGNED NOT NULL,
+  utility ENUM('water','electricity') NOT NULL,
+  period DATE NOT NULL,                              -- first day of the month
+  previous_reading DECIMAL(12,2) NOT NULL,
+  current_reading DECIMAL(12,2) NOT NULL,
+  units_used DECIMAL(12,2) NOT NULL,
+  price_per_unit DECIMAL(10,2) NOT NULL,
+  amount DECIMAL(14,2) NOT NULL,
+  meter_replaced TINYINT(1) NOT NULL DEFAULT 0,
+  invoice_id INT UNSIGNED NULL,                      -- NULL when 0 units used
+  created_by INT UNSIGNED NULL,
+  updated_by INT UNSIGNED NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_reading (unit_id, utility, period),
+  KEY idx_client (client_id),
+  KEY idx_invoice (invoice_id),
+  CONSTRAINT fk_mr_unit FOREIGN KEY (unit_id) REFERENCES units(id) ON DELETE CASCADE,
+  CONSTRAINT fk_mr_client FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE,
+  CONSTRAINT fk_mr_invoice FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Money received
